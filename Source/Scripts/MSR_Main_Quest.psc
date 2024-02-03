@@ -2,6 +2,7 @@ Scriptname MSR_Main_Quest extends Quest
 {The documentation string.}
 
 Spell Property magickaDebuffSpell Auto
+Spell Property removeAllPower Auto
 Float Property reserveMultiplier = 0.5 Auto
 Actor Property playerRef Auto
 bool Property debugLogging = true Auto Hidden
@@ -38,6 +39,7 @@ EndFunction
 Function Uninstall()
     RemoveAllSpells()
     playerRef.RemoveSpell(magickaDebuffSpell)
+    playerRef.RemoveSpell(removeAllPower)
     JValue.releaseObjectsWithTag(retainTag)
 EndFunction
 
