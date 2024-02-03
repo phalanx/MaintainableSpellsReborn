@@ -1,13 +1,14 @@
 Scriptname MSR_DetectSpellCast extends ReferenceAlias
 {Player Alias Script}
 
-Spell Property oakFlesh Auto
 Spell Property magickaDebuffSpell Auto
+Spell Property removeAllPower Auto
 Float Property reserveMultiplier = 0.5 Auto
 
 Actor myself
 
 string retainTag = "MaintainableSpellsReborn"
+string dataDir = "Data/MSR"
 int jSupportedSpells
 int jMaintainedSpells
 int jSpellCostMap
@@ -30,6 +31,7 @@ Event OnInit()
     JValue.retain(jSpellCostMap, retainTag)
 
     GetSupportedSpells()
+    ; SaveSupportedSpells()
 EndEvent
 
 Event OnPlayerLoadGame()
@@ -37,8 +39,11 @@ Event OnPlayerLoadGame()
 EndEvent
 
 Event OnSpellCast(Form akSpell)
+    Log(akSpell + " cast")
     Spell spellCast = akSpell as Spell
-    if JArray.findForm(jMaintainedSpells,akSpell) != -1
+    if spellCast == removeAllPower
+        RemoveAllSpells()
+    elseif JArray.findForm(jMaintainedSpells, akSpell) != -1
         Log("Maintained spell detected")
         RemoveSpell(spellCast)
     elseif JArray.findForm(jSupportedSpells, akSpell) != -1
@@ -56,8 +61,28 @@ Function UpdateDebuff()
     myself.AddSpell(magickaDebuffSpell, false)
 EndFunction
 
+Function SaveSupportedSpells()
+    Log("Saving")
+    int dataMap = JMap.object()
+    JMap.setObj(dataMap, "supportedSpells", jSupportedSpells)
+    JValue.writeToFile(dataMap, "Data/MSR/Vanilla.json")
+EndFunction
+
 Function GetSupportedSpells()
-    JArray.addForm(jsupportedSpells, oakFlesh)
+
+    JArray.clear(jSupportedSpells)
+    ; JArray.addForm(jSupportedSpells, sSpells[0])
+    ; JArray.addForm(jSupportedSpells, sSpells[1])
+    ; JArray.addForm(jSupportedSpells, oakFlesh)
+    int jDir = JValue.readFromDirectory(dataDir)
+    string[] jFileNameArray = JMap.allKeysPArray(jDir)
+    int i = 0
+    while i < jFileNameArray.Length
+        Log("Reading File " + jFileNameArray[i])
+        int jFileData = JMap.getObj(jDir, jFileNameArray[i])
+        JArray.addFromArray(jSupportedSpells, JMap.getObj(jFileData, "supportedSpells"))
+        i += 1
+    endwhile
 EndFunction
 
 Function UpdateReservedMagicka(int amount)
@@ -76,6 +101,7 @@ Function RemoveSpell(Spell akSpell)
     int spellCost = jFormMap.getInt(jSpellCostMap, akSpell)
     Log("Removal spell cost: " + spellCost)
     UpdateReservedMagicka(spellCost * -1)
+    myself.RestoreActorValue("Magicka", spellCost)
     
     JFormMap.removeKey(jSpellCostMap, akSpell)
     UpdateDebuff()
@@ -102,4 +128,12 @@ Function AddSpell(Spell akSpell)
     akSpell.Cast(myself)
     JArray.addForm(jMaintainedSpells, akSpell)
     UpdateDebuff()
+EndFunction
+
+Function RemoveAllSpells()
+    int i = 0
+    while i < JArray.count(jMaintainedSpells)
+        RemoveSpell(JArray.getForm(jMaintainedSpells, i) as Spell)
+        i += 1
+    endwhile
 EndFunction
