@@ -11,7 +11,6 @@ string retainTag = "MaintainableSpellsReborn"
 string supportedSpellsKey = ".MSR.supportedSpells"
 string maintainedSpellsKey = ".MSR.maintainedSpells"
 
-; int jMaintainedSpells
 int jSpellCostMap
 
 int spellDurationSeconds = 5962000 ; 69 Days. This is just an arbitrarily large number
@@ -36,6 +35,12 @@ Function Maintenance()
     Log("Maintenance Finished")
 EndFunction
 
+Function Uninstall()
+    RemoveAllSpells()
+    playerRef.RemoveSpell(magickaDebuffSpell)
+    JValue.releaseObjectsWithTag(retainTag)
+EndFunction
+
 Function GetSupportedSpells()
     int jSupportedSpells = JArray.object()
     int jDir = JValue.readFromDirectory(dataDir)
@@ -57,12 +62,12 @@ Function UpdateDebuff()
     playerRef.AddSpell(magickaDebuffSpell, false)
 EndFunction
 
-; Function SaveSupportedSpells()
-;     Log("Saving")
-;     int dataMap = JMap.object()
-;     JMap.setObj(dataMap, "supportedSpells", jSupportedSpells)
-;     JValue.writeToFile(dataMap, "Data/MSR/Vanilla.json")
-; EndFunction
+Function SaveSupportedSpells()
+    ; Log("Saving")
+    ; int dataMap = JMap.object()
+    ; JMap.setObj(dataMap, "supportedSpells", jSupportedSpells)
+    ; JValue.writeToFile(dataMap, "Data/MSR/Vanilla.json")
+EndFunction
 
 Function UpdateReservedMagicka(int amount)
     Log("Current reserved magicka: " + currentReservedMagicka)
