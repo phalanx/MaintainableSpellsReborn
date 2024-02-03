@@ -16,7 +16,7 @@
         <Variable Name="ModsFolder" Value="E:\Skyrim\1.6.640\Authoring\Maintainable Spells Reborn\Mods" />
     </Variables>
     <Imports>
-        <Import>@ModsFolder/PapyrusUtil SE - Modders Scripting Utility Functions/Source/Scripts</Import>
+        <!-- <Import>@ModsFolder/PapyrusUtil SE - Modders Scripting Utility Functions/Source/Scripts</Import> -->
         <Import>@ModsFolder/JContainers SE/scripts/source</Import>
         <Import>@ModsFolder/skse/Scripts/Source</Import>
         <Import>@ModsFolder/Creation Kit Scripts/Scripts/Source</Import>

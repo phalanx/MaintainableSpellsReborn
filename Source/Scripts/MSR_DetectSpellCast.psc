@@ -6,13 +6,14 @@ Spell Property magickaDebuffSpell Auto
 Float Property reserveMultiplier = 0.5 Auto
 
 Actor myself
-Form[] maintainedSpells
-Form[] supportedSpells
-int spellDurationSeconds = 5962000 ; 69 Days. This is just an arbitrarily large number
 
-string jRoot = ".MSR"
-string ReservedMagickaKey = ".CurrentReservedMagicka"
-string SpellCostMapKey = ".SpellCosts"
+string retainTag = "MaintainableSpellsReborn"
+int jSupportedSpells
+int jMaintainedSpells
+int jSpellCostMap
+
+int spellDurationSeconds = 5962000 ; 69 Days. This is just an arbitrarily large number
+float currentReservedMagicka = 0.0
 
 Function Log(string msg)
     Debug.Trace("[MSR] " + msg)
@@ -20,6 +21,14 @@ EndFunction
 
 Event OnInit()
     myself = self.GetReference() as Actor
+    
+    jSupportedSpells = JArray.object()
+    JValue.retain(jSupportedSpells, retainTag)
+    jMaintainedSpells = JArray.object()
+    JValue.retain(jMaintainedSpells, retainTag)
+    jSpellCostMap = JFormMap.object()
+    JValue.retain(jSpellCostMap, retainTag)
+
     GetSupportedSpells()
 EndEvent
 
@@ -29,72 +38,57 @@ EndEvent
 
 Event OnSpellCast(Form akSpell)
     Spell spellCast = akSpell as Spell
-    if maintainedSpells.Find(akSpell) != -1
+    if JArray.findForm(jMaintainedSpells,akSpell) != -1
+        Log("Maintained spell detected")
         RemoveSpell(spellCast)
-    elseif supportedSpells.Find(akSpell) != -1
+    elseif JArray.findForm(jSupportedSpells, akSpell) != -1
+        Log("Supported spell detected")
         AddSpell(spellCast)
+    else
+        Log("Spell not supported")
     endif
-    UpdateDebuff()
 EndEvent
 
 Function UpdateDebuff()
-    int currentReservedMagicka = JDB.solveInt(jRoot+reservedMagickaKey)
-    Log("Debuff Reserved magicka: " + currentReservedMagicka)
+    Log("Debuff reserved magicka: " + currentReservedMagicka)
     magickaDebuffSpell.SetNthEffectMagnitude(0, currentReservedMagicka)
     myself.RemoveSpell(magickaDebuffSpell)
     myself.AddSpell(magickaDebuffSpell, false)
 EndFunction
 
 Function GetSupportedSpells()
-    supportedSpells = PapyrusUtil.FormArray(0)
-    supportedSpells = PapyrusUtil.PushForm(supportedSpells, oakFlesh)
+    JArray.addForm(jsupportedSpells, oakFlesh)
 EndFunction
 
-Function UpdateReserveAmount(int amount)
-    
-    int currentReservedMagicka = JDB.solveInt(jRoot+reservedMagickaKey)
-    Log("Current Reserved Magicka: " + currentReservedMagicka)
+Function UpdateReservedMagicka(int amount)
+    Log("Current reserved magicka: " + currentReservedMagicka)
+    currentReservedMagicka += amount * reserveMultiplier
+    if currentReservedMagicka < 1 && currentReservedMagicka > -1
+        currentReservedMagicka = 0
+    endif
+    currentReservedMagicka = Math.Floor(currentReservedMagicka)
 EndFunction
 
 Function RemoveSpell(Spell akSpell)
     myself.DispelSpell(akSpell)
-    maintainedSpells = PapyrusUtil.RemoveForm(maintainedSpells, akSpell)
-
-    int jSpellCostMap = JDB.solveObj(jRoot+spellCostMapKey)
-    if jSpellCostMap == 0
-        jSpellCostMap = jFormMap.object()
-    endif
+    jArray.eraseForm(jMaintainedSpells, akSpell)
     
     int spellCost = jFormMap.getInt(jSpellCostMap, akSpell)
-    Log("Spell Cost: " + spellCost)
+    Log("Removal spell cost: " + spellCost)
+    UpdateReservedMagicka(spellCost * -1)
     
-    int currentReservedMagicka = JDB.solveInt(jRoot+reservedMagickaKey)
-    currentReservedMagicka -= Math.Floor(spellCost * reserveMultiplier)
-    JDB.solveIntSetter(jRoot+reservedMagickaKey, currentReservedMagicka, true)
-    Log("New Reserved Magicka: " + currentReservedMagicka)
-
-    jFormMap.setInt(jSpellCostMap, akSpell, 0)
-    jDB.solveObjSetter(jRoot+spellCostMapKey, 0)
+    JFormMap.removeKey(jSpellCostMap, akSpell)
+    UpdateDebuff()
 EndFunction
 
 Function AddSpell(Spell akSpell)
-    int currentReservedMagicka = JDB.solveInt(jRoot+reservedMagickaKey)
-    Log("Current Reserved Magicka: " + currentReservedMagicka)
-    
     int spellCost = akSPell.GetEffectiveMagickaCost(myself)
-    Log("Spell Cost: " + spellCost)
+    Log("Spell cost: " + spellCost)
    
-    currentReservedMagicka += Math.Floor(spellCost * reserveMultiplier)
+    UpdateReservedMagicka(spellCost)
     myself.RestoreActorValue("Magicka", spellCost)
-    JDB.solveIntSetter(jRoot+reservedMagickaKey, currentReservedMagicka, true)
-    Log("New Reserved Magicka: " + currentReservedMagicka)
 
-    int jSpellCostMap = JDB.solveObj(jRoot+spellCostMapKey)
-    if jSpellCostMap == 0
-        jSpellCostMap = jFormMap.object()
-    endif
     jFormMap.setInt(jSpellCostMap, akSpell, spellCost)
-    jDB.solveObjSetter(jRoot+spellCostMapKey, jSpellCostMap, true)
 
     int i = 0
     MagicEffect[] spellEffects = akSpell.GetMagicEffects()
@@ -106,5 +100,6 @@ Function AddSpell(Spell akSpell)
     myself.DispelSpell(akSpell)
     Utility.Wait(0.1)
     akSpell.Cast(myself)
-    maintainedSpells = PapyrusUtil.PushForm(maintainedSpells, akSpell)
+    JArray.addForm(jMaintainedSpells, akSpell)
+    UpdateDebuff()
 EndFunction
