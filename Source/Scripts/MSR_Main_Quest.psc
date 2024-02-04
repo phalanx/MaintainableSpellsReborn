@@ -192,23 +192,23 @@ EndFunction
 Function __ToggleSpellOn(Spell akSpell)
     GoToState("ProcessingSpell")
     int spellCost = akSPell.GetEffectiveMagickaCost(playerRef)
-    int reserveMultiplier = JMap.getInt(JFormMap.getObj(JDB.solveObj(supportedSpellsKey), akSpell), "reserveMultiplier")
+    int spellData = JFormMap.getObj(JDB.solveObj(supportedSpellsKey), akSpell)
+    int reserveMultiplier = JMap.getInt(spellData, "reserveMultiplier")
     Log("Reserve Multiplier: " + reserveMultiplier)
+
+    ResolveKeywordedMagicEffect(akSpell, JMap.getStr(spellData, "Keyword"))
 
     int i = 0
     MagicEffect[] spellEffects = akSpell.GetMagicEffects()
     while i < spellEffects.Length
         Log("Setting Effect " + i + " Duration")
-        ResolveKeywordedMagicEffect(akSpell.GetNthEffectMagicEffect(i), akSpell)
         akSpell.SetNthEffectDuration(i, spellDurationSeconds)
         i += 1
     endwhile
     
     playerRef.DispelSpell(akSpell)
     Utility.Wait(0.1)
-
-
-    
+   
     if !UpdateReservedMagicka(spellCost, reserveMultiplier)
         Log("Backlash triggered")
         GoToState("")
@@ -226,22 +226,21 @@ Function __ToggleSpellOn(Spell akSpell)
     GoToState("")
 EndFunction
 
-Function ResolveKeywordedMagicEffect(MagicEffect akEffect, Spell akSpell)
-    int i = 0
-    while i < akEffect.GetNumKeywords()
-        string effectKeyword = akEffect.GetNthKeyword(i).GetString()
-        Log("Checking Keyword: " + effectKeyword)
+Function ResolveKeywordedMagicEffect(Spell akSpell, string spellKeyword)
+        Log("Checking Keyword: " + spellKeyword)   
+        if spellKeyword == genericKeyword
+            return
+        endif
+        
         int keyArray = JMap.allKeys(jSpellKeywordMap)
-        if JArray.findStr(keyArray, effectKeyword) != -1
-            Log("Supported Keyword Found")
-            Form checkSpellForm = JMap.getForm(jSpellKeywordMap, effectKeyword)
+        if JArray.findStr(keyArray, spellKeyword) != -1
+            Log("Registered Keyword Found")
+            Form checkSpellForm = JMap.getForm(jSpellKeywordMap, spellKeyword)
             if checkSpellForm != None
                 __ToggleSpellOff(checkSpellForm as Spell)
             endif
-            JMap.setForm(jSpellKeywordMap, effectKeyword, akSpell)
         endif
-        i += 1
-    endwhile
+        JMap.setForm(jSpellKeywordMap, spellKeyword, akSpell)
 EndFunction
 
 Function ToggleSpellOff(Spell akSpell)
