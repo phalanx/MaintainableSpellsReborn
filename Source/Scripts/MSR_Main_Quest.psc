@@ -109,13 +109,19 @@ Function UpdateDebuff()
     magickaDebuffSpell.SetNthEffectMagnitude(0, currentReservedMagicka)
     playerRef.RemoveSpell(magickaDebuffSpell)
     playerRef.AddSpell(magickaDebuffSpell, false)
+
+    playerRef.RemoveSpell(mentalLoadDebuffs[0])
+    playerRef.RemoveSpell(mentalLoadDebuffs[1])
     
-    int thresholdCheck = JArray.count(JDB.solveObj(maintainedSpellsKey)) - JDB.solveInt(configKey + "perSpellThreshold")
+    int perSpellThreshold = JDB.solveInt(configKey + "perSpellThreshold")
+    if perSpellThreshold == -1
+        return
+    endif
+    int thresholdCheck = JArray.count(JDB.solveObj(maintainedSpellsKey)) - perSpellThreshold
     if thresholdCheck < 0
         thresholdCheck = 0       
     endif
-    playerRef.RemoveSpell(mentalLoadDebuffs[0])
-    playerRef.RemoveSpell(mentalLoadDebuffs[1])
+
     int debuffIndex = JDB.solveInt(configKey + "perSpellDebuffType")
     mentalLoadDebuffs[debuffIndex].SetNthEffectMagnitude(0, JDB.solveFlt(configKey + "perSPellDebuffAmount") * thresholdCheck)
     playerRef.AddSpell(mentalLoadDebuffs[debuffIndex])
