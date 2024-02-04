@@ -2,16 +2,22 @@ Scriptname MSR_Main_Quest extends Quest
 {The documentation string.}
 
 Spell Property magickaDebuffSpell Auto
+Spell Property magickaRateDebuffSpell Auto
 Spell Property removeAllPower Auto
-Float Property reserveMultiplier = 0.5 Auto
 Actor Property playerRef Auto
-bool Property debugLogging = true Auto Hidden
 
 string dataDir = "Data/MSR"
 string retainTag = "MaintainableSpellsReborn"
 string supportedSpellsKey = ".MSR.supportedSpells"
 string maintainedSpellsKey = ".MSR.maintainedSpells"
 string genericKeyword = "Generic" ; Used for spells that don't use keywords to dispel effects
+
+; Available Configs
+; bool debugLogging Whether logs should be written to file
+; float reserveMultiplier
+; float perSpellDebuffAmount
+; int perSpellThreshold
+string configKey = ".MSR.Config."
 
 int jSpellCostMap
 int jSpellKeywordMap
@@ -20,12 +26,16 @@ int spellDurationSeconds = 5962000 ; 69 Days. This is just an arbitrarily large 
 float currentReservedMagicka = 0.0
 
 Function Log(string msg)
-    if debugLogging
+    if JDB.solveInt(configKey + ".debugLogging") as bool
         Debug.Trace("[MSR] " + msg)
     endif
 EndFunction
 
 Event OnInit()
+    JDB.solveIntSetter(configKey + "debugLogging", 1, true)
+    JDB.solveFltSetter(configKey + "reserveMultiplier", 50, true)
+    JDB.solveFltSetter(configKey + "perSpellDebuffAmount", 1.0, true)
+    JDB.solveIntSetter(configKey + "perSpellThreshold", 3, true)
         
     jSpellCostMap = JFormMap.object()
     jSpellKeywordMap = JMap.object()
@@ -44,6 +54,7 @@ EndFunction
 Function Uninstall()
     RemoveAllSpells()
     playerRef.RemoveSpell(magickaDebuffSpell)
+    playerRef.RemoveSpell(magickaRateDebuffSpell)
     playerRef.RemoveSpell(removeAllPower)
     JValue.releaseObjectsWithTag(retainTag)
 EndFunction
@@ -94,11 +105,19 @@ Function UpdateDebuff()
     magickaDebuffSpell.SetNthEffectMagnitude(0, currentReservedMagicka)
     playerRef.RemoveSpell(magickaDebuffSpell)
     playerRef.AddSpell(magickaDebuffSpell, false)
+    
+    int thresholdCheck = JArray.count(JDB.solveObj(maintainedSpellsKey)) - JDB.solveInt(configKey + "perSpellThreshold")
+    if thresholdCheck < 0
+        thresholdCheck = 0       
+    endif
+    playerRef.RemoveSpell(magickaRateDebuffSpell)
+    magickaRateDebuffSpell.SetNthEffectMagnitude(0, JDB.solveFlt(configKey + "perSPellDebuffAmount") * thresholdCheck )
+    playerRef.AddSpell(magickaRateDebuffSpell, false)
 EndFunction
 
 Function UpdateReservedMagicka(int amount)
     Log("Current reserved magicka: " + currentReservedMagicka)
-    currentReservedMagicka += amount * reserveMultiplier
+    currentReservedMagicka += amount * (JDB.solveFlt(configKey + "reserveMultiplier")/100)
     if currentReservedMagicka < 1 && currentReservedMagicka > -1
         currentReservedMagicka = 0
     elseif currentReservedMagicka < 0
@@ -134,8 +153,8 @@ Function __ToggleSpellOn(Spell akSpell)
     akSpell.Cast(playerRef)
     int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey, JArray.object())
     JArray.addForm(jMaintainedSpells, akSpell)
-    UpdateDebuff()
     JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells, true)
+    UpdateDebuff()
     GoToState("")
 EndFunction
 
