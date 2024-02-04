@@ -161,9 +161,9 @@ Function UpdateDebuff()
     playerRef.AddSpell(mentalLoadDebuffs[debuffIndex])
 EndFunction
 
-bool Function UpdateReservedMagicka(int amount)
+bool Function UpdateReservedMagicka(int amount, float multiplier)
     Log("Current reserved magicka: " + currentReservedMagicka)
-    float newReserveAmount = amount * (JDB.solveFlt(configKey + "reserveMultiplier")/100)
+    float newReserveAmount = amount * (multiplier/100)
     if newReserveAmount > playerRef.GetActorValueMax("Magicka")
         Backlash()
         return false
@@ -192,7 +192,9 @@ EndFunction
 Function __ToggleSpellOn(Spell akSpell)
     GoToState("ProcessingSpell")
     int spellCost = akSPell.GetEffectiveMagickaCost(playerRef)
-    
+    int reserveMultiplier = JMap.getInt(JFormMap.getObj(JDB.solveObj(supportedSpellsKey), akSpell), "reserveMultiplier")
+    Log("Reserve Multiplier: " + reserveMultiplier)
+
     int i = 0
     MagicEffect[] spellEffects = akSpell.GetMagicEffects()
     while i < spellEffects.Length
@@ -205,8 +207,9 @@ Function __ToggleSpellOn(Spell akSpell)
     playerRef.DispelSpell(akSpell)
     Utility.Wait(0.1)
 
-    bool reserveSuccessful = UpdateReservedMagicka(spellCost)
-    if !reserveSuccessful
+
+    
+    if !UpdateReservedMagicka(spellCost, reserveMultiplier)
         Log("Backlash triggered")
         GoToState("")
         return
@@ -259,9 +262,8 @@ Function __ToggleSpellOff(Spell akSpell)
     JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells)
     
     int spellCost = jFormMap.getInt(jSpellCostMap, akSpell)
-    Log("Removal spell cost: " + spellCost)
-    UpdateReservedMagicka(spellCost * -1)
-    playerRef.RestoreActorValue("Magicka", spellCost)
+    int reserveMultiplier = JMap.getInt(JFormMap.getObj(JDB.solveObj(supportedSpellsKey), akSpell), "reserveMultiplier")
+    UpdateReservedMagicka(spellCost * -1, reserveMultiplier)
     
     JFormMap.removeKey(jSpellCostMap, akSpell)
     UpdateDebuff()
