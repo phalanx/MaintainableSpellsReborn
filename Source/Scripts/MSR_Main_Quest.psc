@@ -18,7 +18,6 @@ string retainTag = "MaintainableSpellsReborn"
 string supportedSpellsKey = ".MSR.supportedSpells"  ; JFormMap
 string maintainedSpellsKey = ".MSR.maintainedSpells" ; JArray
 string userConfiguredSpellsKey = ".MSR.userConfiguredSpells" ; JArray
-string genericKeyword = "Generic" ; Used for spells that don't use keywords to dispel effects
 
 ; Available Configs
 ; bool debugLogging Whether logs should be written to file
@@ -228,7 +227,7 @@ EndFunction
 
 Function ResolveKeywordedMagicEffect(Spell akSpell, string spellKeyword)
         Log("Checking Keyword: " + spellKeyword)   
-        if spellKeyword == genericKeyword
+        if spellKeyword == "Generic"
             return
         endif
         
