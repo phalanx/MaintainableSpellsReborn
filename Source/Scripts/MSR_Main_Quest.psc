@@ -15,8 +15,9 @@ Actor Property playerRef Auto
 string dataDir = "Data/MSR/"
 string userDir
 string retainTag = "MaintainableSpellsReborn"
-string supportedSpellsKey = ".MSR.supportedSpells"
-string maintainedSpellsKey = ".MSR.maintainedSpells"
+string supportedSpellsKey = ".MSR.supportedSpells"  ; JFormMap
+string maintainedSpellsKey = ".MSR.maintainedSpells" ; JArray
+string userConfiguredSpellsKey = ".MSR.userConfiguredSpells" ; JArray
 string genericKeyword = "Generic" ; Used for spells that don't use keywords to dispel effects
 
 ; Available Configs
@@ -39,7 +40,7 @@ Function Log(string msg)
 EndFunction
 
 Event OnInit()
-    userDir = JContainers.userDirectory() + "MSR"
+    userDir = JContainers.userDirectory() + "MSR/"
 
     JDB.solveIntSetter(configKey + "debugLogging", 1, true)
     JDB.solveFltSetter(configKey + "reserveMultiplier", 50, true)
@@ -73,12 +74,21 @@ Function Uninstall()
 EndFunction
 
 Function ReadDefaultSpells()
-    int jNewSpells = ReadConfigFile(dataDir)
+    int jNewSpells = ReadConfigDirectory(dataDir)
     JDB.solveObjSetter(supportedSpellsKey, jNewSpells, true)
     JValue.release(jNewSpells)
 endFunction
 
-int Function ReadConfigFile(string dirPath)
+Function ReadUserConfiguration()
+    int jNewSpells = ReadConfigDirectory(userDir)
+    int jOldSpells = JDB.solveObj(supportedSpellsKey)
+    JFormMap.addPairs(jNewSpells, jOldSpells, true)
+    JDB.solveObjSetter(supportedSpellsKey, jNewSpells, true)
+    JDB.solveObjSetter(userConfiguredSpellsKey, JFormMap.AllKeys(jNewSpells))
+    JValue.release(jNewSpells)
+EndFunction
+
+int Function ReadConfigDirectory(string dirPath)
     int jNewSpells = JFormMap.object()
     JValue.retain(jNewSpells)
     int jDir = JValue.readFromDirectory(dataDir)
@@ -91,9 +101,6 @@ int Function ReadConfigFile(string dirPath)
         Log("Current Keys: " + JFormMap.allKeysPArray(jNewSpells))
     endwhile
     return jNewSpells
-EndFunction
-
-Function GetUserConfiguration()
 EndFunction
 
 Function SaveSupportedSpells()
