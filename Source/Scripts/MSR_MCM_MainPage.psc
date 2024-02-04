@@ -4,7 +4,12 @@ MSR_Main_Quest Property MSR_Main Auto
 
 string configKey = ".MSR.Config."
 
+string[] perSpellDebuffTypeStrings
+
 event OnInit()
+    perSpellDebuffTypeStrings = new string[2]
+    perSpellDebuffTypeStrings[0] = "$MSR_perSpellDebuffType_MagickaRate"
+    perSpellDebuffTypeStrings[1] = "$MSR_perSpellDebuffType_Magicka"
     RegisterModule("$MSR_SETTINGS")
 endevent
 
@@ -20,7 +25,24 @@ event OnPageDraw()
     AddSliderOptionST("Slider_perSpellDebuffAmount", "$MSR_perSpellDebuffAmount", JDB.solveFlt(configKey + "perSpellDebuffAmount"))
     AddSliderOptionST("Slider_perSpellThreshold", "$MSR_perSpellThreshold", JDB.solveFlt(configKey + "perSpellThreshold"))
     AddToggleOptionST("Toggle___debugLogging", "$MSR_debugLogging", JDB.solveInt(".MSR.Config.debugLogging") as bool)
+    AddMenuOptionST("Menu_perSpellDebuffType", "$MSR_perSpellDebuffType", perSpellDebuffTypeStrings[JDB.solveInt(configKey + "perSpellDebuffType")])
 endevent
+
+State Menu_perSpellDebuffType
+    Event OnMenuOpenST(string state_id)
+        SetMenuDialog(perSpellDebuffTypeStrings, JDB.solveInt(configKey + "perSpellDebuffType"), 0)
+    EndEvent
+
+    Event OnMenuAcceptST(string state_id, int index)
+        JDB.solveIntSetter(configKey + "perSpellDebuffType", index)
+        SetMenuOptionValueST(perSpellDebuffTypeStrings[JDB.solveInt(configKey + "perSpellDebuffType")])
+        MSR_Main.UpdateDebuff()
+    EndEvent
+
+    Event OnHighlightST(string state_id)
+        SetInfoText("$MSR_perSpellDebuffType_HELP")
+    EndEvent
+EndState
 
 State Slider_reserveMultiplier
     Event OnSliderOpenST(string state_id)
