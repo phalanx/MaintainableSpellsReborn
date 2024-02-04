@@ -30,13 +30,13 @@ Event OnSpellCast(Form akSpell)
         Log("Err: No supported spells in JDB")
         return
     endif
-    
+
     if spellCast == removeAllPower
         MSR_Main.ToggleAllSpellsOff()
     elseif JArray.findForm(jMaintainedSpells, spellCast) != -1
         Log("Maintained spell detected")
         MSR_Main.ToggleSpellOff(spellCast)
-    elseif JArray.findForm(jSupportedSpells, spellCast) != -1
+    elseif JFormMap.hasKey(jSupportedSpells, akSpell)
         Log("Supported spell detected")
         MSR_Main.ToggleSpellOn(spellCast)
     else

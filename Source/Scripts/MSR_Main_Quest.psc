@@ -12,7 +12,8 @@ Keyword Property freeToggleOffKeyword Auto
 Spell Property removeAllPower Auto
 Actor Property playerRef Auto
 
-string dataDir = "Data/MSR"
+string dataDir = "Data/MSR/"
+string userDir
 string retainTag = "MaintainableSpellsReborn"
 string supportedSpellsKey = ".MSR.supportedSpells"
 string maintainedSpellsKey = ".MSR.maintainedSpells"
@@ -38,6 +39,8 @@ Function Log(string msg)
 EndFunction
 
 Event OnInit()
+    userDir = JContainers.userDirectory() + "MSR"
+
     JDB.solveIntSetter(configKey + "debugLogging", 1, true)
     JDB.solveFltSetter(configKey + "reserveMultiplier", 50, true)
     JDB.solveFltSetter(configKey + "perSpellDebuffAmount", 1.0, true)
@@ -49,11 +52,12 @@ Event OnInit()
     JValue.retain(jSpellCostMap, retainTag)
     JValue.retain(jSpellKeywordMap, retainTag)
     Maintenance()
+    ; SaveSupportedSpells()
 EndEvent
 
 Function Maintenance()
     Log("Maintenance Running")
-    GetSupportedSpells()
+    ReadDefaultSpells()
     playerRef.AddPerk(freeToggleOffPerk)
     Log("Maintenance Finished")
     ; SaveSupportedSpells()
@@ -68,45 +72,61 @@ Function Uninstall()
     JValue.releaseObjectsWithTag(retainTag)
 EndFunction
 
-Function GetSupportedSpells()
-    int jSupportedSpells = JArray.object()
-    JValue.retain(jSupportedSpells)
+Function ReadDefaultSpells()
+    int jNewSpells = ReadConfigFile(dataDir)
+    JDB.solveObjSetter(supportedSpellsKey, jNewSpells, true)
+    JValue.release(jNewSpells)
+endFunction
+
+int Function ReadConfigFile(string dirPath)
+    int jNewSpells = JFormMap.object()
+    JValue.retain(jNewSpells)
     int jDir = JValue.readFromDirectory(dataDir)
-    string[] jFileNameArray = JMap.allKeysPArray(jDir)
-    int i = 0
-    while i < jFileNameArray.Length
-        Log("Reading File " + jFileNameArray[i])
-        int jFileData = JMap.getObj(jDir, jFileNameArray[i])
-        int jKeywordMap = JMap.getObj(jFileData,".supportedSpells")
-        string currentKeyword = jMap.nextKey(jKeywordMap)
-        while currentKeyword != ""
-            Form currentKeywordForm = Keyword.GetKeyword(currentKeyword)
-            Log(currentKeywordForm)
-            Log(currentKeyword)
-            if currentKeyword != genericKeyword
-                Form filledSpell = JMap.getForm(jSpellKeywordMap, currentKeyword)
-                int keywordSpells = JMap.getObj(jKeywordMap, currentKeyword)
-                JMap.setForm(jSpellKeywordMap, currentKeyword, filledSpell)
-                JArray.addFromArray(jSupportedSpells, keywordSpells)
-            endif
-            currentKeyword = jMap.nextKey(jKeywordMap, currentKeyword)
-        endwhile
-        JArray.addFromArray(jSupportedSpells, JMap.getObj(jKeywordMap, genericKeyword))
-        i += 1
+    string currentFile = JMap.nextKey(jDir)
+    while currentFile != ""
+        Log("Reading File: " + currentFile)
+        int jFileData = JMap.getObj(jDir, currentFile)
+        JFormMap.addPairs(jNewSpells, jFileData, true)
+        currentFile = JMap.nextKey(jDir,currentFile)
+        Log("Current Keys: " + JFormMap.allKeysPArray(jNewSpells))
     endwhile
-    JDB.solveObjSetter(supportedSpellsKey, jSupportedSpells, true)
-    JValue.release(jSupportedSpells)
+    return jNewSpells
+EndFunction
+
+Function GetUserConfiguration()
 EndFunction
 
 Function SaveSupportedSpells()
     Log("Saving")
-    int dataMap = JMap.object()
     int jSupportedSpells = JDB.solveObj(supportedSpellsKey)
-    int keywordMap = JMap.object()
-    JMap.setObj(keywordMap, "armorSpellKeyword", jSupportedSpells)
-    JMap.setObj(dataMap, ".supportedSpells", keywordMap)
-    ; JMap.setObj(dataMap, ".supportedSpells", jSupportedSpells)
-    JValue.writeToFile(dataMap, "Data/MSR/Vanilla3.json")
+    JValue.retain(jSupportedSpells)
+
+    int jConvertedSpells = JFormMap.object()
+    JValue.retain(jConvertedSpells)
+    int i = 0
+    while i < jArray.count(jSupportedSpells)
+        Log("Converting")
+        int jSpellMap = JMap.object()
+        JMap.clear(jSpellMap)
+
+        JMap.setInt(jSpellMap, "reserveMultiplier", 50)
+        MagicEffect me = (JArray.getForm(jSupportedSpells, i) as Spell).GetNthEffectMagicEffect(0)
+
+        if me.HasKeywordString("MagicArmorSpell")
+            JMap.setStr(jSpellMap, "Keyword", "MagicArmorSpell")
+        elseif me.HasKeywordString("MagicCloak")
+            JMap.setStr(jSpellMap, "Keyword", "MagicCloak")
+        else
+            JMap.setStr(jSpellMap, "Keyword", "Generic")
+        endif
+
+        JFormMap.setObj(jConvertedSpells, JArray.getForm(jSupportedSpells, i), jSpellMap)
+        i += 1
+    endwhile
+
+    JValue.writeToFile(jConvertedSpells, dataDir + "Vanilla2.json")
+
+    JValue.release(jConvertedSpells)
 EndFunction
 
 Function UpdateDebuff()
@@ -163,7 +183,6 @@ EndFunction
 Function __ToggleSpellOn(Spell akSpell)
     GoToState("ProcessingSpell")
     int spellCost = akSPell.GetEffectiveMagickaCost(playerRef)
-    Log("Spell cost: " + spellCost)
     
     int i = 0
     MagicEffect[] spellEffects = akSpell.GetMagicEffects()
@@ -175,7 +194,7 @@ Function __ToggleSpellOn(Spell akSpell)
     endwhile
     
     playerRef.DispelSpell(akSpell)
-    Utility.Wait(0.5)
+    Utility.Wait(0.1)
 
     bool reserveSuccessful = UpdateReservedMagicka(spellCost)
     if !reserveSuccessful
