@@ -32,7 +32,7 @@ Event OnSpellCast(Form akSpell)
     endif
     
     if spellCast == removeAllPower
-        MSR_Main.RemoveAllSpells()
+        MSR_Main.ToggleAllSpellsOff()
     elseif JArray.findForm(jMaintainedSpells, spellCast) != -1
         Log("Maintained spell detected")
         MSR_Main.ToggleSpellOff(spellCast)

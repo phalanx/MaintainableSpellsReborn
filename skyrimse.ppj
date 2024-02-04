@@ -16,7 +16,7 @@
         <Variable Name="ModsFolder" Value="E:\Skyrim\1.6.640\Authoring\Maintainable Spells Reborn\Mods" />
     </Variables>
     <Imports>
-        <!-- <Import>@ModsFolder/PapyrusUtil SE - Modders Scripting Utility Functions/Source/Scripts</Import> -->
+        <Import>@ModsFolder/powerofthree's Papyrus Extender/Source/Scripts</Import>
         <Import>@ModsFolder/NL_MCM - A Modular MCM Framework - SDK/scripts/source</Import>
         <Import>@ModsFolder/SkyUI SDK/Scripts/source</Import>
         <Import>@ModsFolder/JContainers SE/scripts/source</Import>

@@ -1,10 +1,14 @@
 Scriptname MSR_Main_Quest extends Quest
 {The documentation string.}
 
+import PO3_SKSEFunctions
+
 Spell Property magickaDebuffSpell Auto
 ; 0 - Magicka Rate Mult
 ; 1 - Magicka
 Spell[] Property mentalLoadDebuffs Auto
+Perk Property freeToggleOffPerk Auto
+Keyword Property freeToggleOffKeyword Auto
 Spell Property removeAllPower Auto
 Actor Property playerRef Auto
 
@@ -50,12 +54,13 @@ EndEvent
 Function Maintenance()
     Log("Maintenance Running")
     GetSupportedSpells()
+    playerRef.AddPerk(freeToggleOffPerk)
     Log("Maintenance Finished")
     ; SaveSupportedSpells()
 EndFunction
 
 Function Uninstall()
-    RemoveAllSpells()
+    ToggleAllSpellsOff()
     playerRef.RemoveSpell(magickaDebuffSpell)
     playerRef.RemoveSpell(mentalLoadDebuffs[0])
     playerRef.RemoveSpell(mentalLoadDebuffs[1])
@@ -127,19 +132,32 @@ Function UpdateDebuff()
     playerRef.AddSpell(mentalLoadDebuffs[debuffIndex])
 EndFunction
 
-Function UpdateReservedMagicka(int amount)
+bool Function UpdateReservedMagicka(int amount)
     Log("Current reserved magicka: " + currentReservedMagicka)
-    currentReservedMagicka += amount * (JDB.solveFlt(configKey + "reserveMultiplier")/100)
+    float newReserveAmount = amount * (JDB.solveFlt(configKey + "reserveMultiplier")/100)
+    if newReserveAmount > playerRef.GetActorValueMax("Magicka")
+        Backlash()
+        return false
+    endif
+    currentReservedMagicka += newReserveAmount
     if currentReservedMagicka < 1 && currentReservedMagicka > -1
         currentReservedMagicka = 0
     elseif currentReservedMagicka < 0
         currentReservedMagicka = 0
     endif
     currentReservedMagicka = Math.Floor(currentReservedMagicka)
+    return true
+EndFunction
+
+Function Backlash()
+    Debug.Notification("Spells Backlash")
+    ToggleAllSpellsOff()
 EndFunction
 
 Function ToggleSpellOn(Spell akSpell)
+    GoToState("ProcessingSpell")
     __ToggleSpellOn(akSpell)
+    GoToState("")
 EndFunction
 
 Function __ToggleSpellOn(Spell akSpell)
@@ -155,18 +173,25 @@ Function __ToggleSpellOn(Spell akSpell)
         akSpell.SetNthEffectDuration(i, spellDurationSeconds)
         i += 1
     endwhile
+    
+    playerRef.DispelSpell(akSpell)
+    Utility.Wait(0.5)
 
-    UpdateReservedMagicka(spellCost)
+    bool reserveSuccessful = UpdateReservedMagicka(spellCost)
+    if !reserveSuccessful
+        Log("Backlash triggered")
+        GoToState("")
+        return
+    endif
+
     playerRef.RestoreActorValue("Magicka", spellCost)
     jFormMap.setInt(jSpellCostMap, akSpell, spellCost)
-
-    playerRef.DispelSpell(akSpell)
-    Utility.Wait(0.1)
     akSpell.Cast(playerRef)
     int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey, JArray.object())
     JArray.addForm(jMaintainedSpells, akSpell)
     JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells, true)
     UpdateDebuff()
+    AddKeywordToForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
     GoToState("")
 EndFunction
 
@@ -189,11 +214,14 @@ Function ResolveKeywordedMagicEffect(MagicEffect akEffect, Spell akSpell)
 EndFunction
 
 Function ToggleSpellOff(Spell akSpell)
+    GoToState("ProcessingSpell")
     __ToggleSpellOff(akSpell)
+    GoToState("")
 EndFunction
 
 Function __ToggleSpellOff(Spell akSpell)
-    GoToState("ProcessingSpell")
+    
+    Log("Toggling Spell Off: " + akSPell)
     playerRef.DispelSpell(akSpell)
     int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey)
     if jMaintainedSpells == 0
@@ -209,18 +237,19 @@ Function __ToggleSpellOff(Spell akSpell)
     
     JFormMap.removeKey(jSpellCostMap, akSpell)
     UpdateDebuff()
-    GoToState("")
+    RemoveKeywordOnForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
+
 EndFunction
 
-Function RemoveAllSpells()
+Function ToggleAllSpellsOff()
+    GoToState("ProcessingSpell")
     int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey)
     JValue.retain(jMaintainedSpells)
-    int i = 0
-    while i < JArray.count(jMaintainedSpells)
-        __ToggleSpellOff(JArray.getForm(jMaintainedSpells, i) as Spell)
-        i += 1
+    while JArray.count(jMaintainedSpells) > 0
+        __ToggleSpellOff(JArray.getForm(jMaintainedSpells, 0) as Spell)
     endwhile
     jValue.release(jMaintainedSpells)
+    GoToState("")
 EndFunction
 
 State ProcessingSpell
