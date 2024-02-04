@@ -47,6 +47,8 @@ Event OnInit()
     JDB.solveFltSetter(configKey + "perSpellDebuffAmount", 1.0, true)
     JDB.solveIntSetter(configKey + "perSpellThreshold", 3, true)
     JDB.solveIntSetter(configKey + "perSpellDebuffType", 0, true)
+    
+    JDB.solveObjSetter(userConfiguredSpellsKey, JArray.object(), true)
         
     jSpellCostMap = JFormMap.object()
     jSpellKeywordMap = JMap.object()

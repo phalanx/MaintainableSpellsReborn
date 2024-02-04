@@ -3,14 +3,13 @@ Scriptname MSR_MCM_MainPage extends nl_mcm_module
 MSR_Main_Quest Property MSR_Main Auto
 
 string configKey = ".MSR.Config."
-
 string[] perSpellDebuffTypeStrings
 
 event OnInit()
     perSpellDebuffTypeStrings = new string[2]
     perSpellDebuffTypeStrings[0] = "$MSR_perSpellDebuffType_MagickaRate"
     perSpellDebuffTypeStrings[1] = "$MSR_perSpellDebuffType_Magicka"
-    RegisterModule("$MSR_SETTINGS")
+    RegisterModule("$MSR_SETTINGS", 1)
 endevent
 
 event OnPageInit()
