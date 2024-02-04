@@ -35,10 +35,10 @@ Event OnSpellCast(Form akSpell)
         MSR_Main.RemoveAllSpells()
     elseif JArray.findForm(jMaintainedSpells, spellCast) != -1
         Log("Maintained spell detected")
-        MSR_Main.RemoveSpell(spellCast)
+        MSR_Main.ToggleSpellOff(spellCast)
     elseif JArray.findForm(jSupportedSpells, spellCast) != -1
         Log("Supported spell detected")
-        MSR_Main.AddSpell(spellCast)
+        MSR_Main.ToggleSpellOn(spellCast)
     else
         Log("Spell not supported")
     endif
