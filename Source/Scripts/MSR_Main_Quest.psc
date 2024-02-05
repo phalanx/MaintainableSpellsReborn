@@ -111,10 +111,6 @@ Function AddKeywordToSpells(int jNewSpells)
     endwhile
 EndFunction
 
-Function RemoveKeywordsFromSpells(int jSpells)
-
-EndFunction
-
 int Function ReadConfigDirectory(string dirPath)
     int jNewSpells = JFormMap.object()
     JValue.retain(jNewSpells)
