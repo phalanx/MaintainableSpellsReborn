@@ -2,10 +2,8 @@ Scriptname MSR_DetectSpellCast extends ReferenceAlias
 {Player Alias Script}
 
 MSR_Main_Quest Property MSR_Main Auto
-Spell Property removeAllPower Auto
 
 Actor myself
-
 string supportedSpellsKey = ".MSR.supportedSpells"
 string maintainedSpellsKey = ".MSR.maintainedSpells"
 
@@ -30,10 +28,8 @@ Event OnSpellCast(Form akSpell)
         Log("Err: No supported spells in JDB")
         return
     endif
-
-    if spellCast == removeAllPower
-        MSR_Main.ToggleAllSpellsOff()
-    elseif JArray.findForm(jMaintainedSpells, spellCast) != -1
+    
+    if JArray.findForm(jMaintainedSpells, spellCast) != -1
         Log("Maintained spell detected")
         MSR_Main.ToggleSpellOff(spellCast)
     elseif JFormMap.hasKey(jSupportedSpells, akSpell)

@@ -9,7 +9,7 @@ event OnInit()
     perSpellDebuffTypeStrings = new string[2]
     perSpellDebuffTypeStrings[0] = "$MSR_perSpellDebuffType_MagickaRate"
     perSpellDebuffTypeStrings[1] = "$MSR_perSpellDebuffType_Magicka"
-    RegisterModule("$MSR_SETTINGS", 1)
+    RegisterModule("$MSR_SETTINGS", 0)
 endevent
 
 event OnPageInit()

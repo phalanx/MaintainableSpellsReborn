@@ -157,7 +157,7 @@ Function UpdateDebuff()
 
     int debuffIndex = JDB.solveInt(configKey + "perSpellDebuffType")
     mentalLoadDebuffs[debuffIndex].SetNthEffectMagnitude(0, JDB.solveFlt(configKey + "perSPellDebuffAmount") * thresholdCheck)
-    playerRef.AddSpell(mentalLoadDebuffs[debuffIndex])
+    playerRef.AddSpell(mentalLoadDebuffs[debuffIndex], false)
 EndFunction
 
 bool Function UpdateReservedMagicka(int amount, float multiplier)
@@ -193,7 +193,13 @@ Function __ToggleSpellOn(Spell akSpell)
     int spellCost = akSPell.GetEffectiveMagickaCost(playerRef)
     int spellData = JFormMap.getObj(JDB.solveObj(supportedSpellsKey), akSpell)
     int reserveMultiplier = JMap.getInt(spellData, "reserveMultiplier")
+    bool blacklisted = JMap.getInt(spellData, "isBlacklisted") as bool
     Log("Reserve Multiplier: " + reserveMultiplier)
+
+    if blacklisted
+        Log("Spell is blacklisted")
+        return
+    endif
 
     ResolveKeywordedMagicEffect(akSpell, JMap.getStr(spellData, "Keyword"))
 
@@ -274,9 +280,33 @@ Function ToggleAllSpellsOff()
     int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey)
     JValue.retain(jMaintainedSpells)
     while JArray.count(jMaintainedSpells) > 0
-        __ToggleSpellOff(JArray.getForm(jMaintainedSpells, 0) as Spell)
+         __ToggleSpellOff(JArray.getForm(jMaintainedSpells, 0) as Spell)
     endwhile
-    jValue.release(jMaintainedSpells)
+    JValue.release(jMaintainedSpells)
+    GoToState("")
+EndFunction
+
+Function ToggleUtilitySpellsOff()
+    GoToState("ProcessingSpell")
+
+    int jMaintainedSpells = JArray.object()
+    JArray.addFromArray(jMaintainedSpells, JDB.solveObj(maintainedSpellsKey))
+    int jSupportedSpells = JDB.solveObj(supportedSpellsKey)
+    JValue.retain(jMaintainedSpells)
+    JValue.retain(jSupportedSpells)
+    
+    int spellData
+    int i = 0
+    while i < JArray.count(jMaintainedSpells)
+        spellData = JFormMap.getObj(jSupportedSpells, JArray.getForm(jMaintainedSpells, i))
+        if JMap.GetInt(spellData, "isUtilitySpell") as bool
+            __ToggleSpellOff(JArray.getForm(jMaintainedSpells, i) as Spell)
+        endif
+        i += 1
+    endwhile
+    
+    JValue.release(jMaintainedSpells)
+    JValue.release(jSupportedSpells)
     GoToState("")
 EndFunction
 

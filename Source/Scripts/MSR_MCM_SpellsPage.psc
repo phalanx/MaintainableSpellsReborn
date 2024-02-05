@@ -9,9 +9,10 @@ int supportedSpellsLookup
 int userConfiguredSpells
 
 event OnInit()
-    RegisterModule("$MSR_SPELLSPAGE", 2)
+    RegisterModule("$MSR_SPELLSPAGE", 1)
 endevent
 
+int currentSpellsPage = 0
 event OnPageDraw()
     supportedSpells = JDB.solveObj(supportedSpellsKey)
     supportedSpellsLookup = JMap.object()
@@ -25,6 +26,16 @@ event OnPageDraw()
     AddHeaderOption("$MSR_SPELLHEADER")
     AddHeaderOption("$MSR_SPELLHEADER")
     SetCursorFillMode(TOP_TO_BOTTOM)
+    PaginateSpells(currentSpellsPage)
+endevent
+
+event OnConfigClose()
+    JValue.release(supportedSpells)
+    JValue.release(supportedSpellsLookup)
+    JValue.release(userConfiguredSpells)
+EndEvent
+
+Function PaginateSpells(int startingPage = 0)
     Form nextSpell = JFormMap.nextKey(supportedSpells)
     while nextSpell != None
         string spellName = nextSpell.getName()
@@ -34,35 +45,46 @@ event OnPageDraw()
     int sortedKeys = JArray.sort(JMap.allKeys(supportedSpellsLookup))
     int cursorPosition = 4
     MSR_Main.Log(JArray.asStringArray(sortedKeys))
-    int i = 0
-    while i < JArray.count(sortedKeys)
+    int i = (startingPage * 30)
+    while i < JArray.count(sortedKeys) && cursorPosition < 120
         Form currentSpell = JMap.GetForm(supportedSpellsLookup, JArray.getStr(sortedKeys, i))
         AddSpellBlock(currentSpell as Spell)
         if (cursorPosition % 2) == 0
             cursorPosition +=1
         else
-            cursorPosition += 5
+            cursorPosition += 9
         endif
         SetCursorPosition(cursorPosition)
         i += 1
     endwhile
-endevent
-
-event OnConfigClose()
-    JValue.release(supportedSpells)
-    JValue.release(supportedSpellsLookup)
-    JValue.release(userConfiguredSpells)
-EndEvent
+    if cursorPosition >= 124
+        SetCursorFillMode(LEFT_TO_RIGHT)
+        AddHeaderOption("")
+        AddHeaderOption("")
+        if currentSpellsPage != 0
+            AddTextOptionST("Paginate___Previous", "$MSR_PREVIOUSPAGE", None)
+        else
+            AddEmptyOption()
+        endif
+        if i < JArray.count(sortedKeys)
+            AddTextOptionST("Paginate___Next", "$MSR_NEXTPAGE", None)
+        endif
+    endif
+EndFunction
 
 Function AddSpellBlock(Spell akSpell)
     int spellData = JFormMap.getObj(supportedSpells, akSpell)
     string spellName = akSPell.getName()
     string currentKeyword = JMap.GetStr(spellData,"Keyword")
     int reserveMultiplier = JMap.getInt(spellData, "reserveMultiplier")
+    bool isBlackListed = JMap.getInt(spellData, "isBlacklisted") as bool
+    bool isUtilitySpell = JMap.getInt(spellData, "isUtilitySpell") as bool
   
     AddTextOptionST("NoState___" + spellName, FONT_PRIMARY(spellName), None)
     AddInputOptionST("Input_Keyword___" + spellName, "$MSR_INPUT_KEYWORD", currentKeyword)
     AddSliderOptionST("Slider_ReserveMultiplier___" + spellName, "$MSR_SLIDER_RESERVEMULTIPLIER", reserveMultiplier)
+    AddToggleOptionST("Toggle_Blacklist___" + spellName, "$MSR_SPELL_BLACKLIST", isBlackListed)
+    AddToggleOptionST("Toggle_UtilitySpell___" + spellName, "$MSR_UTILITYSPELL", isUtilitySpell)
 EndFunction
 
 State Input_Keyword
@@ -127,4 +149,55 @@ State AddSpell
 
         ForcePageReset()
     EndEvent
+EndState
+
+State Toggle_Blacklist
+    Event OnSelectST(string state_id)
+        Form currentSpell = JMap.getForm(supportedSpellsLookup, state_id)
+        int spellData = JFormMap.getObj(supportedSpells, currentSpell)
+        bool currentValue = !JMap.GetInt(spellData, "isBlacklisted") as bool
+
+        JMap.setInt(spellData, "isBlacklisted", currentValue as int)
+        JFormMap.setObj(supportedSpells, currentSpell, spellData)
+        JArray.addForm(userConfiguredSpells, currentSpell)
+
+        JDB.solveObjSetter(supportedSpellsKey, supportedSpells)
+        JDB.solveObjSetter(userConfiguredSpellsKey, userConfiguredSpells)
+        SetToggleOptionValueST(currentValue)
+    EndEvent
+
+    Event OnHighlightST(string state_id)
+        SetInfoText("$MSR_BLACKLIST_HELP")
+    EndEvent
+EndState
+
+State Toggle_UtilitySpell
+    Event OnSelectST(string state_id)
+        Form currentSpell = JMap.getForm(supportedSpellsLookup, state_id)
+        int spellData = JFormMap.getObj(supportedSpells, currentSpell)
+        bool currentValue = !JMap.GetInt(spellData, "isUtilitySpell") as bool
+
+        JMap.setInt(spellData, "isUtilitySpell", currentValue as int)
+        JFormMap.setObj(supportedSpells, currentSpell, spellData)
+        JArray.addForm(userConfiguredSpells, currentSpell)
+
+        JDB.solveObjSetter(supportedSpellsKey, supportedSpells)
+        JDB.solveObjSetter(userConfiguredSpellsKey, userConfiguredSpells)
+        SetToggleOptionValueST(currentValue)
+    EndEvent
+
+    Event OnHighlightST(string state_id)
+        SetInfoText("$MSR_UTILITYSPELL_HELP")
+    EndEvent
+EndState
+
+State Paginate
+    Event OnSelectST(string state_id)
+        if state_id == "Next"
+            currentSpellsPage += 1
+        elseif state_id == "Previous"
+            currentSpellsPage -= 1
+        endif
+        ForcePageReset()
+    endEvent
 EndState
