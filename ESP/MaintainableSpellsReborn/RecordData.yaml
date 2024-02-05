@@ -5,8 +5,8 @@ ModKey: MaintainableSpellsReborn.esp
 GameRelease: SkyrimSE
 ModHeader:
   Stats:
-    NumRecords: 20
-    NextFormID: 40650
+    NumRecords: 21
+    NextFormID: 43407
   Author: DEFAULT
   MasterReferences:
   - Master: Skyrim.esm

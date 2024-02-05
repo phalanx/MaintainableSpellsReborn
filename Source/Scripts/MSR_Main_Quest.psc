@@ -7,8 +7,9 @@ Spell Property magickaDebuffSpell Auto
 ; 0 - Magicka Rate Mult
 ; 1 - Magicka
 Spell[] Property mentalLoadDebuffs Auto
-Perk Property freeToggleOffPerk Auto
+Perk Property spellManipulationPerk Auto
 Keyword Property freeToggleOffKeyword Auto
+Keyword Property toggleableKeyword Auto
 Spell Property removeAllPower Auto
 Actor Property playerRef Auto
 
@@ -59,7 +60,7 @@ EndEvent
 Function Maintenance()
     Log("Maintenance Running")
     ReadDefaultSpells()
-    playerRef.AddPerk(freeToggleOffPerk)
+    playerRef.AddPerk(spellManipulationPerk)
     Log("Maintenance Finished")
     ; SaveSupportedSpells()
 EndFunction
@@ -70,6 +71,18 @@ Function Uninstall()
     playerRef.RemoveSpell(mentalLoadDebuffs[0])
     playerRef.RemoveSpell(mentalLoadDebuffs[1])
     playerRef.RemoveSpell(removeAllPower)
+
+    int jSupportedSpells = JDB.solveObj(supportedSpellsKey)
+    Spell currentSpell = JFormMap.nextKey(jSupportedSpells) as Spell
+    while currentSpell != None
+        if !currentSpell.HasKeyword(toggleableKeyword)
+            RemoveKeywordOnForm(currentSpell.GetNthEffectMagicEffect(0), toggleableKeyword)
+            RemoveKeywordOnForm(currentSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
+            currentSpell = JFormMap.nextKey(jSupportedSpells, currentSpell) as Spell
+        endif
+    endwhile
+
+    JDB.setObj(".MSR", 0)
     JValue.releaseObjectsWithTag(retainTag)
 EndFunction
 
@@ -88,6 +101,20 @@ Function ReadUserConfiguration()
     JValue.release(jNewSpells)
 EndFunction
 
+Function AddKeywordToSpells(int jNewSpells)
+    Spell currentSpell = JFormMap.nextKey(jNewSpells) as Spell
+    while currentSpell != None
+        if !currentSpell.HasKeyword(toggleableKeyword)
+            AddKeywordToForm(currentSpell.GetNthEffectMagicEffect(0), toggleableKeyword)
+            currentSpell = JFormMap.nextKey(jNewSpells, currentSpell) as Spell
+        endif
+    endwhile
+EndFunction
+
+Function RemoveKeywordsFromSpells(int jSpells)
+
+EndFunction
+
 int Function ReadConfigDirectory(string dirPath)
     int jNewSpells = JFormMap.object()
     JValue.retain(jNewSpells)
@@ -98,8 +125,8 @@ int Function ReadConfigDirectory(string dirPath)
         int jFileData = JMap.getObj(jDir, currentFile)
         JFormMap.addPairs(jNewSpells, jFileData, true)
         currentFile = JMap.nextKey(jDir,currentFile)
-        Log("Current Keys: " + JFormMap.allKeysPArray(jNewSpells))
     endwhile
+    AddKeywordToSpells(jNewSpells)
     return jNewSpells
 EndFunction
 
@@ -202,17 +229,6 @@ Function __ToggleSpellOn(Spell akSpell)
 
     ResolveKeywordedMagicEffect(akSpell, JMap.getStr(spellData, "Keyword"))
 
-    int i = 0
-    MagicEffect[] spellEffects = akSpell.GetMagicEffects()
-    while i < spellEffects.Length
-        Log("Setting Effect " + i + " Duration")
-        akSpell.SetNthEffectDuration(i, spellDurationSeconds)
-        i += 1
-    endwhile
-    
-    playerRef.DispelSpell(akSpell)
-    Utility.Wait(0.1)
-   
     if !UpdateReservedMagicka(spellCost, reserveMultiplier)
         Log("Backlash triggered")
         GoToState("")
@@ -314,6 +330,12 @@ State ProcessingSpell
         Log("Already Procesing Spell")
     EndFunction
     Function ToggleSpellOff(Spell akSpell)
+        Log("Already Processing Spell")
+    EndFunction
+    Function ToggleUtilitySpellsOff()
+        Log("Already Processing Spell")
+    EndFunction
+    Function ToggleAllSpellsOff()
         Log("Already Processing Spell")
     EndFunction
 EndState
