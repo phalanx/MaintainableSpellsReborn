@@ -1,6 +1,8 @@
 Scriptname MSR_MCM_SpellsPage extends nl_mcm_module
 
 MSR_Main_Quest Property MSR_Main Auto
+string Property noSpellErrorMessage = "No spell equipped in that hand" Auto
+string Property spellAddedMessage = "Spell added successfully" Auto
 
 string supportedSpellsKey = ".MSR.supportedSpells" ; JFormMap
 string userConfiguredSpellsKey = ".MSR.userConfiguredSpells" ; JArray
@@ -83,7 +85,7 @@ Function AddSpellBlock(Spell akSpell)
     AddTextOptionST("NoState___" + spellName, FONT_PRIMARY(spellName), None)
     AddInputOptionST("Input_Keyword___" + spellName, "$MSR_INPUT_KEYWORD", currentKeyword)
     AddSliderOptionST("Slider_ReserveMultiplier___" + spellName, "$MSR_SLIDER_RESERVEMULTIPLIER", reserveMultiplier)
-    AddToggleOptionST("Toggle_Blacklist___" + spellName, "$MSR_SPELL_BLACKLIST", isBlackListed)
+    AddToggleOptionST("Toggle_Blacklist___" + spellName, "$MSR_BLACKLIST", isBlackListed)
     AddToggleOptionST("Toggle_UtilitySpell___" + spellName, "$MSR_UTILITYSPELL", isUtilitySpell)
 EndFunction
 
@@ -133,9 +135,12 @@ EndState
 
 State AddSpell
     Event OnSelectST(string state_id)
+        SetOptionFlagsST(OPTION_FLAG_DISABLED, false, "AddSpell___" + state_id)
         Spell equippedSpell = MSR_Main.playerRef.GetEquippedSpell(state_id as int)
         if equippedSpell == None
             MSR_Main.Log("Spell not equipped in slot: " + state_id)
+            Debug.MessageBox(noSpellErrorMessage)
+            SetOptionFlagsST(OPTION_FLAG_None, false, "AddSpell___" + state_id)
             return
         endif
         int spellData = JMap.object()
@@ -148,6 +153,8 @@ State AddSpell
         JDB.solveObjSetter(userConfiguredSpellsKey, userConfiguredSpells)
 
         ForcePageReset()
+        Debug.MessageBox(spellAddedMessage)
+        SetOptionFlagsST(OPTION_FLAG_NONE, false, "AddSpell___" + state_id)
     EndEvent
 EndState
 

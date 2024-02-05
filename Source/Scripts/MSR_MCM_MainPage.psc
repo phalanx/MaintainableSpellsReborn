@@ -18,13 +18,14 @@ event OnPageInit()
 endevent
 
 event OnPageDraw()
-    ; SetCursorFillMode(TOP_TO_BOTTOM)
+    SetCursorFillMode(TOP_TO_BOTTOM)
     AddHeaderOption("$MSR_RESERVATIONHEADER")
-    AddSliderOptionST("Slider_reserveMultiplier", "$MSR_reserveMultiplier", JDB.solveFlt(configKey + "reserveMultiplier"))
+    AddMenuOptionST("Menu_perSpellDebuffType", "$MSR_perSpellDebuffType", perSpellDebuffTypeStrings[JDB.solveInt(configKey + "perSpellDebuffType")])
     AddSliderOptionST("Slider_perSpellDebuffAmount", "$MSR_perSpellDebuffAmount", JDB.solveFlt(configKey + "perSpellDebuffAmount"))
     AddSliderOptionST("Slider_perSpellThreshold", "$MSR_perSpellThreshold", JDB.solveFlt(configKey + "perSpellThreshold"))
+    SetCursorPosition(1)
+    AddHeaderOption("$MSR_DEBUGHEADER")
     AddToggleOptionST("Toggle___debugLogging", "$MSR_debugLogging", JDB.solveInt(".MSR.Config.debugLogging") as bool)
-    AddMenuOptionST("Menu_perSpellDebuffType", "$MSR_perSpellDebuffType", perSpellDebuffTypeStrings[JDB.solveInt(configKey + "perSpellDebuffType")])
 endevent
 
 State Menu_perSpellDebuffType
