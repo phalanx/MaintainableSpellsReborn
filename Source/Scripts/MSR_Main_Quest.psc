@@ -42,7 +42,6 @@ Event OnInit()
     userDir = JContainers.userDirectory() + "MSR/"
 
     JDB.solveIntSetter(configKey + "debugLogging", 1, true)
-    JDB.solveFltSetter(configKey + "reserveMultiplier", 50, true)
     JDB.solveFltSetter(configKey + "perSpellDebuffAmount", 1.0, true)
     JDB.solveIntSetter(configKey + "perSpellThreshold", 3, true)
     JDB.solveIntSetter(configKey + "perSpellDebuffType", 0, true)
