@@ -1,0 +1,17 @@
+FormKey: 008EA2:MaintainableSpellsReborn.esp
+EditorID: MSR_ReleaseUtilitySpells_Spell
+Name:
+  TargetLanguage: English
+  Value: Release Utility Spells
+EquipmentType: 025BEE:Skyrim.esm
+Description:
+  TargetLanguage: English
+  Value: ''
+Flags:
+- IgnoreResistance
+- NoAbsorbOrReflect
+Type: LesserPower
+CastType: FireAndForget
+Effects:
+- BaseEffect: 008EA1:MaintainableSpellsReborn.esp
+  Data: {}

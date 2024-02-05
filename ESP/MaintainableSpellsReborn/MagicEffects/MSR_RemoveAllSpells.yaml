@@ -1,0 +1,24 @@
+FormKey: 00433A:MaintainableSpellsReborn.esp
+EditorID: MSR_RemoveAllSpells
+VirtualMachineAdapter:
+  Scripts:
+  - Name: MSR_Dispel_Effect
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: MSR
+      Object: 000D62:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptBoolProperty
+      Name: utilityOnly
+Name:
+  TargetLanguage: English
+  Value: Stop Maintaining Spells
+Archetype:
+  MutagenObjectType: MagicEffectArchetype
+  Type: Script
+CastType: FireAndForget
+DualCastScale: 1
+CastingSoundLevel: Normal
+Sounds: []
+Description:
+  TargetLanguage: English
+  Value: Stop focusing on all of your maintained spells to regain your magicka.

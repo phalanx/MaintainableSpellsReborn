@@ -1,0 +1,14 @@
+SpriggitSource:
+  PackageName: Spriggit.Yaml.Skyrim
+  Version: 0.16.0
+ModKey: MaintainableSpellsReborn.esp
+GameRelease: SkyrimSE
+ModHeader:
+  Stats:
+    NumRecords: 20
+    NextFormID: 40650
+  Author: DEFAULT
+  MasterReferences:
+  - Master: Skyrim.esm
+    FileSize: 0
+  INTV: 1

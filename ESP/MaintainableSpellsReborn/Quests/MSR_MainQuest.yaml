@@ -1,0 +1,62 @@
+FormKey: 000D62:MaintainableSpellsReborn.esp
+EditorID: MSR_MainQuest
+VirtualMachineAdapter:
+  Scripts:
+  - Name: MSR_Main_Quest
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: removeAllPower
+      Object: 004339:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: PlayerRef
+      Object: 000014:Skyrim.esm
+    - MutagenObjectType: ScriptObjectListProperty
+      Name: mentalLoadDebuffs
+      Objects:
+      - Name: ''
+        Object: 005E28:MaintainableSpellsReborn.esp
+      - Name: ''
+        Object: 00638C:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: freeToggleOffPerk
+      Object: 007917:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: magickaDebuffSpell
+      Object: 001D8A:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: freeToggleOffKeyword
+      Object: 007918:MaintainableSpellsReborn.esp
+  FileName: ''
+  Aliases:
+  - Property:
+      Name: ''
+      Object: 000D62:MaintainableSpellsReborn.esp
+      Alias: 0
+    Scripts:
+    - Name: MSR_DetectSpellCast
+      Properties:
+      - MutagenObjectType: ScriptObjectProperty
+        Name: MSR_Main
+        Object: 000D62:MaintainableSpellsReborn.esp
+Flags:
+- StartGameEnabled
+- 0x10
+- RunOnce
+Aliases:
+- Name: PlayerAlias
+  Flags: []
+  ForcedReference: 000014:Skyrim.esm
+  Spells:
+  - 05AD5C:Skyrim.esm
+  - 004339:MaintainableSpellsReborn.esp
+  - 03AE9F:Skyrim.esm
+  - 03AEA2:Skyrim.esm
+  - 03AEA3:Skyrim.esm
+  - 05AD5D:Skyrim.esm
+  - 05AD5E:Skyrim.esm
+  - 051B16:Skyrim.esm
+  - 0CDB70:Skyrim.esm
+  - 043324:Skyrim.esm
+  - 08F3EB:Skyrim.esm
+  - 008EA2:MaintainableSpellsReborn.esp
+  VoiceTypes: Null

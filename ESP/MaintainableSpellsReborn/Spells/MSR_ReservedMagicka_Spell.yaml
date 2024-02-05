@@ -1,0 +1,17 @@
+FormKey: 001D8A:MaintainableSpellsReborn.esp
+EditorID: MSR_ReservedMagicka_Spell
+Name:
+  TargetLanguage: English
+  Value: Maintaining Spells
+EquipmentType: 013F44:Skyrim.esm
+Description:
+  TargetLanguage: English
+  Value: ''
+Flags:
+- ManualCostCalc
+- IgnoreResistance
+- NoAbsorbOrReflect
+Type: Ability
+Effects:
+- BaseEffect: 001D89:MaintainableSpellsReborn.esp
+  Data: {}

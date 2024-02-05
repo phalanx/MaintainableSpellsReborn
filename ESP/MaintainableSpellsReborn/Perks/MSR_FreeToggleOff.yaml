@@ -1,0 +1,22 @@
+FormKey: 007917:MaintainableSpellsReborn.esp
+EditorID: MSR_FreeToggleOff
+Description:
+  TargetLanguage: English
+  Value: ''
+NumRanks: 1
+Playable: True
+Effects:
+- MutagenObjectType: PerkEntryPointModifyValue
+  Conditions:
+  - RunOnTabIndex: 1
+    Conditions:
+    - MutagenObjectType: ConditionFloat
+      Unknown1: 0x000000
+      Data:
+        MutagenObjectType: HasKeywordConditionData
+        Keyword: 007918:MaintainableSpellsReborn.esp
+      ComparisonValue: 1
+  EntryPoint: ModSpellCost
+  PerkConditionTabCount: 2
+  Modification: Multiply
+  Value: 0

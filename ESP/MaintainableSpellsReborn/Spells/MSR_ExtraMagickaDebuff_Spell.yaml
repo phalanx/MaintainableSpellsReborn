@@ -1,0 +1,17 @@
+FormKey: 00638C:MaintainableSpellsReborn.esp
+EditorID: MSR_ExtraMagickaDebuff_Spell
+Name:
+  TargetLanguage: English
+  Value: Mental Load
+EquipmentType: 013F44:Skyrim.esm
+Description:
+  TargetLanguage: English
+  Value: ''
+Flags:
+- ManualCostCalc
+- IgnoreResistance
+- NoAbsorbOrReflect
+Type: Ability
+Effects:
+- BaseEffect: 00638E:MaintainableSpellsReborn.esp
+  Data: {}

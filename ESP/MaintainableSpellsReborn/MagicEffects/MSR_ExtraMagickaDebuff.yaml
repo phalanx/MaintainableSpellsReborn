@@ -1,0 +1,17 @@
+FormKey: 00638E:MaintainableSpellsReborn.esp
+EditorID: MSR_ExtraMagickaDebuff
+Name:
+  TargetLanguage: English
+  Value: Mental Load
+Flags:
+- Recover
+- Detrimental
+Archetype:
+  MutagenObjectType: MagicEffectArchetype
+  ActorValue: Magicka
+DualCastScale: 1
+CastingSoundLevel: Normal
+Sounds: []
+Description:
+  TargetLanguage: English
+  Value: Maintaining spells taxes your mind and reserves an additional <mag> points of Magicka

@@ -1,0 +1,32 @@
+FormKey: 005362:MaintainableSpellsReborn.esp
+EditorID: MSR_MCM_Quest
+VirtualMachineAdapter:
+  Scripts:
+  - Name: MSR_MCM_MainPage
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: MSR_Main
+      Object: 000D62:MaintainableSpellsReborn.esp
+  - Name: nl_mcm
+  - Name: MSR_MCM_SpellsPage
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: MSR_Main
+      Object: 000D62:MaintainableSpellsReborn.esp
+  FileName: ''
+  Aliases:
+  - Property:
+      Name: ''
+      Object: 005362:MaintainableSpellsReborn.esp
+      Alias: 0
+    Scripts:
+    - Name: nl_mcm_playerloadalias
+Flags:
+- StartGameEnabled
+- 0x10
+- RunOnce
+Aliases:
+- Name: playerRef
+  Flags: []
+  ForcedReference: 000014:Skyrim.esm
+  VoiceTypes: Null
