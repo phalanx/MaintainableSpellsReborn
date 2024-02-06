@@ -260,7 +260,6 @@ Function __ToggleSpellOn(Spell akSpell)
 
     playerRef.RestoreActorValue("Magicka", spellCost)
     JMap.setInt(spellData, "spellCost", spellCost)
-    akSpell.Cast(playerRef)
     ; int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey, JFormMap.object())
     JFormMap.setObj(jMaintainedSpells, akSpell, spellData)
     Log(JFormMap.allKeysPArray(jMaintainedSpells))
