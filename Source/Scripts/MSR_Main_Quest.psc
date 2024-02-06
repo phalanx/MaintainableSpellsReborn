@@ -30,6 +30,7 @@ string userConfiguredSpellsKey = ".MSR.userConfiguredSpells" ; JArray
 ; bool debugLogging Whether logs should be written to file
 ; float perSpellDebuffAmount
 ; int perSpellThreshold
+; float dualCastMultiplier
 string configKey = ".MSR.Config."
 
 int jSpellKeywordMap
@@ -76,6 +77,7 @@ Event OnInit()
     JDB.solveFltSetter(configKey + "perSpellDebuffAmount", 1.0, true)
     JDB.solveIntSetter(configKey + "perSpellThreshold", 3, true)
     JDB.solveIntSetter(configKey + "perSpellDebuffType", 0, true)
+    JDB.solveFltSetter(configKey + "dualCastMultiplier", 2.8, true)
 
     JDB.solveObjSetter(supportedSpellsKey, JFormMap.object(), true)
     JDB.solveObjSetter(maintainedSpellsKey, JFormMap.object(), true)
@@ -209,7 +211,7 @@ Function UpdateDebuff()
     playerRef.AddSpell(mentalLoadDebuffs[debuffIndex], false)
 EndFunction
 
-bool Function UpdateReservedMagicka(int amount, float multiplier)
+bool Function UpdateReservedMagicka(float amount, float multiplier)
     Log("Current reserved magicka: " + currentReservedMagicka)
     float newReserveAmount = amount * (multiplier/100)
     if newReserveAmount > playerRef.GetActorValueMax("Magicka")
@@ -217,12 +219,12 @@ bool Function UpdateReservedMagicka(int amount, float multiplier)
         return false
     endif
     currentReservedMagicka += newReserveAmount
-    if currentReservedMagicka < 1 && currentReservedMagicka > -1
-        currentReservedMagicka = 0
-    elseif currentReservedMagicka < 0
-        currentReservedMagicka = 0
-    endif
-    currentReservedMagicka = Math.Floor(currentReservedMagicka)
+    ; if currentReservedMagicka < 1 && currentReservedMagicka > -1
+    ;     currentReservedMagicka = 0
+    ; elseif currentReservedMagicka < 0
+    ;     currentReservedMagicka = 0
+    ; endif
+    ; currentReservedMagicka = Math.Floor(currentReservedMagicka)
     return true
 EndFunction
 
@@ -231,14 +233,17 @@ Function Backlash()
     ToggleAllSpellsOff(false)
 EndFunction
 
-Function ToggleSpellOn(Spell akSpell)
+Function ToggleSpellOn(Spell akSpell, bool wasDualCast)
     GoToState("ProcessingSpell")
-    __ToggleSpellOn(akSpell)
+    __ToggleSpellOn(akSpell, wasDualCast)
     GoToState("")
 EndFunction
 
-Function __ToggleSpellOn(Spell akSpell)
-    int spellCost = akSPell.GetEffectiveMagickaCost(playerRef)
+Function __ToggleSpellOn(Spell akSpell, bool wasDualCast)
+    float spellCost = akSPell.GetEffectiveMagickaCost(playerRef)
+    if wasDualCast
+        spellCost = spellCost * JDB.solveFlt(configKey + "dualCastMultiplier")
+    endif
     Log("Toggle on spell Cost: " + spellCost)
     int spellData = JFormMap.getObj(JDB.solveObj(supportedSpellsKey), akSpell)
     int reserveMultiplier = JMap.getInt(spellData, "reserveMultiplier")
@@ -259,7 +264,7 @@ Function __ToggleSpellOn(Spell akSpell)
     endif
 
     playerRef.RestoreActorValue("Magicka", spellCost)
-    JMap.setInt(spellData, "spellCost", spellCost)
+    JMap.setFlt(spellData, "spellCost", spellCost)
     ; int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey, JFormMap.object())
     JFormMap.setObj(jMaintainedSpells, akSpell, spellData)
     Log(JFormMap.allKeysPArray(jMaintainedSpells))
@@ -300,7 +305,7 @@ Function __ToggleSpellOff(Spell akSpell)
         Debug.Notification("$MSR_ERROR_JMAINTAINED_EMPTY")
     endif
     int spellData = JFormMap.getObj(jMaintainedSpells, akSpell)
-    int spellCost = JMap.getInt(spellData, "spellCost")
+    float spellCost = JMap.getFlt(spellData, "spellCost")
     int reserveMultiplier = JMap.getInt(spellData, "reserveMultiplier")
     string spellKeyword = JMap.getStr(spellData, "Keyword")
     Log("Toggle Off Spell Cost: " + spellCost)
@@ -341,7 +346,7 @@ Function __ToggleAllSpellsOff(bool utilityOnly)
 EndFunction
 
 State ProcessingSpell
-    Function ToggleSpellOn(Spell akSpell)
+    Function ToggleSpellOn(Spell akSpell, bool wasDualCast)
         Log("Already Procesing Spell")
         playerRef.DispelSpell(akSpell)
     EndFunction

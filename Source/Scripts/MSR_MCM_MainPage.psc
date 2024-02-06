@@ -23,6 +23,7 @@ event OnPageDraw()
     AddMenuOptionST("Menu_perSpellDebuffType", "$MSR_perSpellDebuffType", perSpellDebuffTypeStrings[JDB.solveInt(configKey + "perSpellDebuffType")])
     AddSliderOptionST("Slider_perSpellDebuffAmount", "$MSR_perSpellDebuffAmount", JDB.solveFlt(configKey + "perSpellDebuffAmount"))
     AddSliderOptionST("Slider_perSpellThreshold", "$MSR_perSpellThreshold", JDB.solveFlt(configKey + "perSpellThreshold"))
+    AddSliderOptionST("Slider_dualCastModifier", "$MSR_dualCastModifier", JDB.solveFlt(configKey + "dualCastMultiplier", 2.8), "{2}")
     SetCursorPosition(1)
     AddHeaderOption("$MSR_DEBUGHEADER")
     AddToggleOptionST("Toggle___debugLogging", "$MSR_debugLogging", JDB.solveInt(".MSR.Config.debugLogging") as bool)
@@ -80,6 +81,19 @@ State Slider_perSpellThreshold
     EndEvent
     Event OnHighlightST(string state_id)
         SetInfoText("$MSR_perSpellThreshold_HELP")
+    EndEvent
+EndState
+
+State Slider_dualCastModifier
+    Event OnSliderOpenST(string state_id)
+        SetSliderDialog(JDB.solveFlt(configKey + "dualCastMultiplier"), 0, 100, 0.1, 2.8)
+    EndEvent
+    Event OnSliderAcceptST(string state_id, float value)
+        JDB.solveFltSetter(configKey + "dualCastMultiplier", value, true)
+        SetSliderOptionValueST(value, "{2}")
+    EndEvent
+    Event OnHighlightST(string state_id)
+        SetInfoText("$MSR_dualCastModifier_HELP")
     EndEvent
 EndState
 

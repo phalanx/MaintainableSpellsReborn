@@ -22,6 +22,10 @@ Event OnPlayerLoadGame()
 EndEvent
 
 Event OnSpellCast(Form akSpell)
+    bool dualCasting = false
+    if myself.GetAnimationVariableBool("isCastingDual")
+        dualCasting = true
+    endif
     Spell spellCast = akSpell as Spell
     Log(spellCast + " cast")
     int jSupportedSpells = JDB.solveObj(supportedSpellsKey)
@@ -34,7 +38,7 @@ Event OnSpellCast(Form akSpell)
         Log("Maintained spell detected")
         MSR_Main.ToggleSpellOff(spellCast)
     elseif spellCast.HasKeyword(toggleableKeyword)
-        MSR_Main.ToggleSpellOn(spellCast)
+        MSR_Main.ToggleSpellOn(spellCast, dualCasting)
     else
         Log("Unsupported spell")
     endif
