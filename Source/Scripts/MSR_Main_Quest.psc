@@ -10,24 +10,22 @@ Spell[] Property mentalLoadDebuffs Auto
 Perk Property spellManipulationPerk Auto
 Keyword Property freeToggleOffKeyword Auto
 Keyword Property toggleableKeyword Auto
-Spell Property removeAllPower Auto
 Actor Property playerRef Auto
 
 string dataDir = "Data/MSR/"
 string userDir
 string retainTag = "MaintainableSpellsReborn"
 string supportedSpellsKey = ".MSR.supportedSpells"  ; JFormMap
-string maintainedSpellsKey = ".MSR.maintainedSpells" ; JArray
+string maintainedSpellsKey = ".MSR.maintainedSpells" ; JFormMap
 string userConfiguredSpellsKey = ".MSR.userConfiguredSpells" ; JArray
 
 ; Available Configs
 ; bool debugLogging Whether logs should be written to file
-; float reserveMultiplier
 ; float perSpellDebuffAmount
 ; int perSpellThreshold
 string configKey = ".MSR.Config."
 
-int jSpellCostMap
+; int jSpellCostMap
 int jSpellKeywordMap
 
 int spellDurationSeconds = 5962000 ; 69 Days. This is just an arbitrarily large number
@@ -49,9 +47,7 @@ Event OnInit()
     
     JDB.solveObjSetter(userConfiguredSpellsKey, JArray.object(), true)
         
-    jSpellCostMap = JFormMap.object()
     jSpellKeywordMap = JMap.object()
-    JValue.retain(jSpellCostMap, retainTag)
     JValue.retain(jSpellKeywordMap, retainTag)
     Maintenance()
     ; SaveSupportedSpells()
@@ -65,12 +61,16 @@ Function Maintenance()
     ; SaveSupportedSpells()
 EndFunction
 
+Function Stop()
+    Uninstall()
+    parent.Stop()
+EndFunction
+
 Function Uninstall()
-    ToggleAllSpellsOff()
+    ToggleAllSpellsOff(false)
     playerRef.RemoveSpell(magickaDebuffSpell)
     playerRef.RemoveSpell(mentalLoadDebuffs[0])
     playerRef.RemoveSpell(mentalLoadDebuffs[1])
-    playerRef.RemoveSpell(removeAllPower)
 
     int jSupportedSpells = JDB.solveObj(supportedSpellsKey)
     Spell currentSpell = JFormMap.nextKey(jSupportedSpells) as Spell
@@ -201,7 +201,7 @@ EndFunction
 
 Function Backlash()
     Debug.Notification("Spells Backlash")
-    ToggleAllSpellsOff()
+    ToggleAllSpellsOff(false)
 EndFunction
 
 Function ToggleSpellOn(Spell akSpell)
@@ -232,10 +232,11 @@ Function __ToggleSpellOn(Spell akSpell)
     endif
 
     playerRef.RestoreActorValue("Magicka", spellCost)
-    jFormMap.setInt(jSpellCostMap, akSpell, spellCost)
+    JMap.setInt(spellData, "spellCost", spellCost)
     akSpell.Cast(playerRef)
-    int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey, JArray.object())
-    JArray.addForm(jMaintainedSpells, akSpell)
+    int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey, JFormMap.object())
+    JFormMap.setObj(jMaintainedSpells, akSpell, spellData)
+    Log(JFormMap.allKeysPArray(jMaintainedSpells))
     JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells, true)
     UpdateDebuff()
     AddKeywordToForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
@@ -273,25 +274,33 @@ Function __ToggleSpellOff(Spell akSpell)
     if jMaintainedSpells == 0
         Log("Err: Removing spell but jMaintainedSpells is empty")
     endif
-    jArray.eraseForm(jMaintainedSpells, akSpell)
+    int spellData = JFormMap.getObj(jMaintainedSpells, akSpell)
+    int spellCost = JMap.getInt(spellData, "spellCost")
+    Log("Spell Cost: " + spellCost)
+    JMap.removeKey(jMaintainedSpells, akSpell)
     JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells)
     
-    int spellCost = jFormMap.getInt(jSpellCostMap, akSpell)
     int reserveMultiplier = JMap.getInt(JFormMap.getObj(JDB.solveObj(supportedSpellsKey), akSpell), "reserveMultiplier")
     UpdateReservedMagicka(spellCost * -1, reserveMultiplier)
-    
-    JFormMap.removeKey(jSpellCostMap, akSpell)
     UpdateDebuff()
     RemoveKeywordOnForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
 
 EndFunction
 
-Function ToggleAllSpellsOff()
+Function ToggleAllSpellsOff(bool utilityOnly)
     GoToState("ProcessingSpell")
     int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey)
     JValue.retain(jMaintainedSpells)
-    while JArray.count(jMaintainedSpells) > 0
-         __ToggleSpellOff(JArray.getForm(jMaintainedSpells, 0) as Spell)
+    Spell currentSpell = JFormMap.nextKey(jMaintainedSpells) as Spell
+    while currentSpell != None
+        if utilityOnly
+            if (JMap.getInt(JFormMap.getObj(jMaintainedSpells, currentSpell), "isUtilitySpell") as bool)
+                __ToggleSpellOff(currentSpell)
+            endif
+        else
+            __ToggleSpellOff(currentSpell)
+        endif
+        currentSpell = JFormMap.nextKey(jMaintainedSpells, currentSpell) as Spell
     endwhile
     JValue.release(jMaintainedSpells)
     GoToState("")
@@ -331,7 +340,7 @@ State ProcessingSpell
     Function ToggleUtilitySpellsOff()
         Log("Already Processing Spell")
     EndFunction
-    Function ToggleAllSpellsOff()
+    Function ToggleAllSpellsOff(bool utilityOnly)
         Log("Already Processing Spell")
     EndFunction
 EndState
