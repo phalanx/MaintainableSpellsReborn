@@ -5,11 +5,11 @@ VirtualMachineAdapter:
   - Name: MSR_Main_Quest
     Properties:
     - MutagenObjectType: ScriptObjectProperty
-      Name: freeToggleOffKeyword
-      Object: 007918:MaintainableSpellsReborn.esp
-    - MutagenObjectType: ScriptObjectProperty
       Name: magickaDebuffSpell
       Object: 001D8A:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: freeToggleOffKeyword
+      Object: 007918:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectListProperty
       Name: mentalLoadDebuffs
       Objects:
@@ -21,14 +21,11 @@ VirtualMachineAdapter:
       Name: PlayerRef
       Object: 000014:Skyrim.esm
     - MutagenObjectType: ScriptObjectProperty
-      Name: removeAllPower
-      Object: 004339:MaintainableSpellsReborn.esp
+      Name: toggleableKeyword
+      Object: 00A42C:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
       Name: spellManipulationPerk
       Object: 007917:MaintainableSpellsReborn.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: toggleableKeyword
-      Object: 00A42C:MaintainableSpellsReborn.esp
   FileName: ''
   Aliases:
   - Property:
@@ -39,14 +36,14 @@ VirtualMachineAdapter:
     - Name: MSR_DetectSpellCast
       Properties:
       - MutagenObjectType: ScriptObjectProperty
+        Name: freeToggleOffKeyword
+        Object: 007918:MaintainableSpellsReborn.esp
+      - MutagenObjectType: ScriptObjectProperty
         Name: MSR_Main
         Object: 000D62:MaintainableSpellsReborn.esp
       - MutagenObjectType: ScriptObjectProperty
         Name: toggleableKeyword
         Object: 00A42C:MaintainableSpellsReborn.esp
-      - MutagenObjectType: ScriptObjectProperty
-        Name: freeToggleOffKeyword
-        Object: 007918:MaintainableSpellsReborn.esp
 Flags:
 - StartGameEnabled
 - 0x10

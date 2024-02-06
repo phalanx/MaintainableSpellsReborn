@@ -25,8 +25,9 @@ string userConfiguredSpellsKey = ".MSR.userConfiguredSpells" ; JArray
 ; int perSpellThreshold
 string configKey = ".MSR.Config."
 
-; int jSpellCostMap
 int jSpellKeywordMap
+int jSupportedSpells
+int jMaintainedSpells
 
 int spellDurationSeconds = 5962000 ; 69 Days. This is just an arbitrarily large number
 float currentReservedMagicka = 0.0
@@ -38,13 +39,16 @@ Function Log(string msg)
 EndFunction
 
 Event OnInit()
-    userDir = JContainers.userDirectory() + "MSR/"
+    ; userDir = JContainers.userDirectory() + "MSR/"
+    userDir = "Data/MSRUserData"
 
     JDB.solveIntSetter(configKey + "debugLogging", 1, true)
     JDB.solveFltSetter(configKey + "perSpellDebuffAmount", 1.0, true)
     JDB.solveIntSetter(configKey + "perSpellThreshold", 3, true)
     JDB.solveIntSetter(configKey + "perSpellDebuffType", 0, true)
-    
+
+    JDB.solveObjSetter(supportedSpellsKey, JFormMap.object(), true)
+    JDB.solveObjSetter(maintainedSpellsKey, JFormMap.object(), true)
     JDB.solveObjSetter(userConfiguredSpellsKey, JArray.object(), true)
         
     jSpellKeywordMap = JMap.object()
@@ -56,7 +60,10 @@ EndEvent
 Function Maintenance()
     Log("Maintenance Running")
     ReadDefaultSpells()
+    ReadUserConfiguration()
     playerRef.AddPerk(spellManipulationPerk)
+    jMaintainedSpells = JDB.solveObj(maintainedSpellsKey)
+    jSupportedSpells = JDB.solveObj(supportedSpellsKey)
     Log("Maintenance Finished")
     ; SaveSupportedSpells()
 EndFunction
@@ -67,12 +74,12 @@ Function Stop()
 EndFunction
 
 Function Uninstall()
+    Log("Beginning uninstall")
     ToggleAllSpellsOff(false)
     playerRef.RemoveSpell(magickaDebuffSpell)
     playerRef.RemoveSpell(mentalLoadDebuffs[0])
     playerRef.RemoveSpell(mentalLoadDebuffs[1])
 
-    int jSupportedSpells = JDB.solveObj(supportedSpellsKey)
     Spell currentSpell = JFormMap.nextKey(jSupportedSpells) as Spell
     while currentSpell != None
         if !currentSpell.HasKeyword(toggleableKeyword)
@@ -84,21 +91,7 @@ Function Uninstall()
 
     JDB.setObj(".MSR", 0)
     JValue.releaseObjectsWithTag(retainTag)
-EndFunction
-
-Function ReadDefaultSpells()
-    int jNewSpells = ReadConfigDirectory(dataDir)
-    JDB.solveObjSetter(supportedSpellsKey, jNewSpells, true)
-    JValue.release(jNewSpells)
-endFunction
-
-Function ReadUserConfiguration()
-    int jNewSpells = ReadConfigDirectory(userDir)
-    int jOldSpells = JDB.solveObj(supportedSpellsKey)
-    JFormMap.addPairs(jNewSpells, jOldSpells, true)
-    JDB.solveObjSetter(supportedSpellsKey, jNewSpells, true)
-    JDB.solveObjSetter(userConfiguredSpellsKey, JFormMap.AllKeys(jNewSpells))
-    JValue.release(jNewSpells)
+    Log("Uninstall Finished")
 EndFunction
 
 Function AddKeywordToSpells(int jNewSpells)
@@ -106,29 +99,41 @@ Function AddKeywordToSpells(int jNewSpells)
     while currentSpell != None
         if !currentSpell.HasKeyword(toggleableKeyword)
             AddKeywordToForm(currentSpell.GetNthEffectMagicEffect(0), toggleableKeyword)
-            currentSpell = JFormMap.nextKey(jNewSpells, currentSpell) as Spell
         endif
+        currentSpell = JFormMap.nextKey(jNewSpells, currentSpell) as Spell
     endwhile
 EndFunction
 
 int Function ReadConfigDirectory(string dirPath)
     int jNewSpells = JFormMap.object()
     JValue.retain(jNewSpells)
-    int jDir = JValue.readFromDirectory(dataDir)
+    int jDir = JValue.readFromDirectory(dirPath)
     string currentFile = JMap.nextKey(jDir)
     while currentFile != ""
         Log("Reading File: " + currentFile)
         int jFileData = JMap.getObj(jDir, currentFile)
         JFormMap.addPairs(jNewSpells, jFileData, true)
-        currentFile = JMap.nextKey(jDir,currentFile)
+        currentFile = JMap.nextKey(jDir, currentFile)
     endwhile
     AddKeywordToSpells(jNewSpells)
     return jNewSpells
 EndFunction
 
+Function ReadDefaultSpells()
+    int jNewSpells = ReadConfigDirectory(dataDir)
+    ; JFormMap.addPairs(jSupportedSpells, jNewSpells, false)
+    JDB.solveObjSetter(supportedSpellsKey, jNewSpells, true)
+    JValue.release(jNewSpells)
+endFunction
+
+Function ReadUserConfiguration()
+    int jNewSpells = ReadConfigDirectory(userDir)
+    JFormMap.addPairs(jSupportedSpells, jNewSpells, true)
+    JValue.release(jNewSpells)
+EndFunction
+
 Function SaveSupportedSpells()
     Log("Saving")
-    int jSupportedSpells = JDB.solveObj(supportedSpellsKey)
     JValue.retain(jSupportedSpells)
 
     int jConvertedSpells = JFormMap.object()
@@ -172,7 +177,8 @@ Function UpdateDebuff()
     if perSpellThreshold == -1
         return
     endif
-    int thresholdCheck = JArray.count(JDB.solveObj(maintainedSpellsKey)) - perSpellThreshold
+
+    int thresholdCheck = JFormMap.count(JDB.solveObj(maintainedSpellsKey)) - perSpellThreshold
     if thresholdCheck < 0
         thresholdCheck = 0       
     endif
@@ -211,8 +217,8 @@ Function ToggleSpellOn(Spell akSpell)
 EndFunction
 
 Function __ToggleSpellOn(Spell akSpell)
-    GoToState("ProcessingSpell")
     int spellCost = akSPell.GetEffectiveMagickaCost(playerRef)
+    Log("Toggle on spell Cost: " + spellCost)
     int spellData = JFormMap.getObj(JDB.solveObj(supportedSpellsKey), akSpell)
     int reserveMultiplier = JMap.getInt(spellData, "reserveMultiplier")
     bool blacklisted = JMap.getInt(spellData, "isBlacklisted") as bool
@@ -234,13 +240,12 @@ Function __ToggleSpellOn(Spell akSpell)
     playerRef.RestoreActorValue("Magicka", spellCost)
     JMap.setInt(spellData, "spellCost", spellCost)
     akSpell.Cast(playerRef)
-    int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey, JFormMap.object())
+    ; int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey, JFormMap.object())
     JFormMap.setObj(jMaintainedSpells, akSpell, spellData)
     Log(JFormMap.allKeysPArray(jMaintainedSpells))
-    JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells, true)
+    ; JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells, true)
     UpdateDebuff()
     AddKeywordToForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
-    GoToState("")
 EndFunction
 
 Function ResolveKeywordedMagicEffect(Spell akSpell, string spellKeyword)
@@ -270,15 +275,20 @@ Function __ToggleSpellOff(Spell akSpell)
     
     Log("Toggling Spell Off: " + akSPell)
     playerRef.DispelSpell(akSpell)
-    int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey)
+
     if jMaintainedSpells == 0
-        Log("Err: Removing spell but jMaintainedSpells is empty")
+        Debug.Notification("$MSR_ERROR_JMAINTAINED_EMPTY")
     endif
     int spellData = JFormMap.getObj(jMaintainedSpells, akSpell)
     int spellCost = JMap.getInt(spellData, "spellCost")
-    Log("Spell Cost: " + spellCost)
+    string spellKeyword = JMap.getStr(spellData, "Keyword")
+    Log("Toggle Off Spell Cost: " + spellCost)
+    Log("Toggle Off Spell Keyword: " + spellKeyword)
+    if spellKeyword != "Generic"
+        JMap.removeKey( jSpellKeywordMap, spellKeyword)
+    Endif
     JMap.removeKey(jMaintainedSpells, akSpell)
-    JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells)
+    ; JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells)
     
     int reserveMultiplier = JMap.getInt(JFormMap.getObj(JDB.solveObj(supportedSpellsKey), akSpell), "reserveMultiplier")
     UpdateReservedMagicka(spellCost * -1, reserveMultiplier)
@@ -289,7 +299,12 @@ EndFunction
 
 Function ToggleAllSpellsOff(bool utilityOnly)
     GoToState("ProcessingSpell")
-    int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey)
+    __ToggleAllSpellsOff(utilityOnly)
+    GoToState("")
+EndFunction
+
+Function __ToggleAllSpellsOff(bool utilityOnly)
+    
     JValue.retain(jMaintainedSpells)
     Spell currentSpell = JFormMap.nextKey(jMaintainedSpells) as Spell
     while currentSpell != None
@@ -303,43 +318,20 @@ Function ToggleAllSpellsOff(bool utilityOnly)
         currentSpell = JFormMap.nextKey(jMaintainedSpells, currentSpell) as Spell
     endwhile
     JValue.release(jMaintainedSpells)
-    GoToState("")
-EndFunction
-
-Function ToggleUtilitySpellsOff()
-    GoToState("ProcessingSpell")
-
-    int jMaintainedSpells = JArray.object()
-    JArray.addFromArray(jMaintainedSpells, JDB.solveObj(maintainedSpellsKey))
-    int jSupportedSpells = JDB.solveObj(supportedSpellsKey)
-    JValue.retain(jMaintainedSpells)
-    JValue.retain(jSupportedSpells)
-    
-    int spellData
-    int i = 0
-    while i < JArray.count(jMaintainedSpells)
-        spellData = JFormMap.getObj(jSupportedSpells, JArray.getForm(jMaintainedSpells, i))
-        if JMap.GetInt(spellData, "isUtilitySpell") as bool
-            __ToggleSpellOff(JArray.getForm(jMaintainedSpells, i) as Spell)
-        endif
-        i += 1
-    endwhile
-    
-    JValue.release(jMaintainedSpells)
-    JValue.release(jSupportedSpells)
-    GoToState("")
 EndFunction
 
 State ProcessingSpell
     Function ToggleSpellOn(Spell akSpell)
         Log("Already Procesing Spell")
+        playerRef.DispelSpell(akSpell)
     EndFunction
     Function ToggleSpellOff(Spell akSpell)
         Log("Already Processing Spell")
+        playerRef.DispelSpell(akSpell)
     EndFunction
-    Function ToggleUtilitySpellsOff()
-        Log("Already Processing Spell")
-    EndFunction
+    ; Function ToggleUtilitySpellsOff()
+    ;     Log("Already Processing Spell")
+    ; EndFunction
     Function ToggleAllSpellsOff(bool utilityOnly)
         Log("Already Processing Spell")
     EndFunction

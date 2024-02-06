@@ -7,6 +7,7 @@ Keyword Property freeToggleOffKeyword Auto
 
 Actor myself
 string supportedSpellsKey = ".MSR.supportedSpells"
+string maintainedSpellsKey = ".MSR.maintainedSpells"
 
 Function Log(string msg)
     MSR_Main.Log("DetectSpellCast - " + msg)
@@ -28,7 +29,7 @@ Event OnSpellCast(Form akSpell)
         Log("Err: No supported spells in JDB")
         return
     endif
-    
+ 
     if spellCast.HasKeyword(freeToggleOffKeyword)
         Log("Maintained spell detected")
         MSR_Main.ToggleSpellOff(spellCast)
