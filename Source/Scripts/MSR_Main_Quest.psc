@@ -2,6 +2,13 @@ Scriptname MSR_Main_Quest extends Quest
 {The documentation string.}
 
 import PO3_SKSEFunctions
+int expectedJContainersAPIVersion = 4
+int expectedJContainersFeatureVersion = 2
+
+string Property MSR_ERROR_JCONTAINERSMISSING = "JContainers appears to be missing. Proceed with Caution" Auto Hidden
+string Property MSR_ERROR_JCONTAINERSAPIHIGH = "JContainers API Version is higher than expected. Notify the author of Maintainable Spells Reborn and proceed with caution" Auto Hidden
+string Property MSR_ERROR_JCONTAINERSAPILOW = "JContainers API Version is lower than expected. Upgrade JContainers or proceed with caution" Auto Hidden
+
 
 Spell Property magickaDebuffSpell Auto
 ; 0 - Magicka Rate Mult
@@ -38,9 +45,32 @@ Function Log(string msg)
     endif
 EndFunction
 
+bool Function ValidateJContainers()
+    Log("Validating JContainers")
+    string errorMessage
+    bool returnCode = true
+    
+    if !JContainers.isInstalled()
+        errorMessage = MSR_ERROR_JCONTAINERSMISSING
+        returnCode = false
+    elseif JContainers.APIVersion() > expectedJContainersAPIVersion
+        errorMessage = MSR_ERROR_JCONTAINERSAPIHIGH
+        returnCode = false
+    elseif JContainers.APIVersion() < expectedJContainersAPIVersion || JContainers.featureVersion() < expectedJContainersFeatureVersion
+        errorMessage = MSR_ERROR_JCONTAINERSAPILOW
+        returnCode = false
+    endif
+
+    if !returnCode
+        Log("MSR ERR: " + errorMessage)
+        Debug.MessageBox("MSR Err:\n" + errorMessage)
+    endif
+    return returnCode
+EndFunction
+
 Event OnInit()
-    ; userDir = JContainers.userDirectory() + "MSR/"
-    userDir = "Data/MSRUserData"
+    ValidateJContainers()
+    userDir = JContainers.userDirectory() + "MSR/"
 
     JDB.solveIntSetter(configKey + "debugLogging", 1, true)
     JDB.solveFltSetter(configKey + "perSpellDebuffAmount", 1.0, true)
@@ -54,18 +84,20 @@ Event OnInit()
     jSpellKeywordMap = JMap.object()
     JValue.retain(jSpellKeywordMap, retainTag)
     Maintenance()
-    ; SaveSupportedSpells()
 EndEvent
 
 Function Maintenance()
     Log("Maintenance Running")
+    ValidateJContainers()
+
+    playerRef.AddPerk(spellManipulationPerk)
+    jSupportedSpells = JDB.solveObj(supportedSpellsKey)
+    jMaintainedSpells = JDB.solveObj(maintainedSpellsKey)
+
     ReadDefaultSpells()
     ReadUserConfiguration()
-    playerRef.AddPerk(spellManipulationPerk)
-    jMaintainedSpells = JDB.solveObj(maintainedSpellsKey)
-    jSupportedSpells = JDB.solveObj(supportedSpellsKey)
+
     Log("Maintenance Finished")
-    ; SaveSupportedSpells()
 EndFunction
 
 Function Stop()
@@ -107,7 +139,12 @@ EndFunction
 int Function ReadConfigDirectory(string dirPath)
     int jNewSpells = JFormMap.object()
     JValue.retain(jNewSpells)
-    int jDir = JValue.readFromDirectory(dirPath)
+    int jDir
+	if JContainers.fileExistsAtPath(dirPath)
+		jDir = JValue.readFromDirectory(dirPath)
+    else
+        return jNewSpells
+	endif
     string currentFile = JMap.nextKey(jDir)
     while currentFile != ""
         Log("Reading File: " + currentFile)
@@ -120,48 +157,32 @@ int Function ReadConfigDirectory(string dirPath)
 EndFunction
 
 Function ReadDefaultSpells()
+    Log("Reading default configurations")
     int jNewSpells = ReadConfigDirectory(dataDir)
-    ; JFormMap.addPairs(jSupportedSpells, jNewSpells, false)
-    JDB.solveObjSetter(supportedSpellsKey, jNewSpells, true)
+    jSupportedSpells = jNewSpells
+    JDB.solveObjSetter(supportedSpellsKey, jSupportedSpells, true)
     JValue.release(jNewSpells)
 endFunction
 
 Function ReadUserConfiguration()
+    Log("Reading user configurations")
     int jNewSpells = ReadConfigDirectory(userDir)
     JFormMap.addPairs(jSupportedSpells, jNewSpells, true)
+    JDB.solveObjSetter(userConfiguredSpellsKey, jNewSpells)
+    JDB.solveObjSetter(supportedSpellsKey, jSupportedSpells, true)
     JValue.release(jNewSpells)
 EndFunction
 
 Function SaveSupportedSpells()
     Log("Saving")
-    JValue.retain(jSupportedSpells)
-
-    int jConvertedSpells = JFormMap.object()
-    JValue.retain(jConvertedSpells)
-    int i = 0
-    while i < jArray.count(jSupportedSpells)
-        Log("Converting")
-        int jSpellMap = JMap.object()
-        JMap.clear(jSpellMap)
-
-        JMap.setInt(jSpellMap, "reserveMultiplier", 50)
-        MagicEffect me = (JArray.getForm(jSupportedSpells, i) as Spell).GetNthEffectMagicEffect(0)
-
-        if me.HasKeywordString("MagicArmorSpell")
-            JMap.setStr(jSpellMap, "Keyword", "MagicArmorSpell")
-        elseif me.HasKeywordString("MagicCloak")
-            JMap.setStr(jSpellMap, "Keyword", "MagicCloak")
-        else
-            JMap.setStr(jSpellMap, "Keyword", "Generic")
-        endif
-
-        JFormMap.setObj(jConvertedSpells, JArray.getForm(jSupportedSpells, i), jSpellMap)
-        i += 1
-    endwhile
-
-    JValue.writeToFile(jConvertedSpells, dataDir + "Vanilla2.json")
-
-    JValue.release(jConvertedSpells)
+    int jUserConfiguredSpells = JDB.solveObj(userConfiguredSpellsKey)
+    
+    if JFormMap.count(jUserConfiguredSpells) != 0    
+        JValue.writeToFile(jUserConfiguredSpells, userDir + "UserConfiguration.json")
+        Log("Done saving")
+    Else
+        Log("Nothing to save")
+    endif
 EndFunction
 
 Function UpdateDebuff()
@@ -276,21 +297,21 @@ Function __ToggleSpellOff(Spell akSpell)
     Log("Toggling Spell Off: " + akSPell)
     playerRef.DispelSpell(akSpell)
 
-    if jMaintainedSpells == 0
+    if JFormMap.count(jMaintainedSpells) == 0
         Debug.Notification("$MSR_ERROR_JMAINTAINED_EMPTY")
     endif
     int spellData = JFormMap.getObj(jMaintainedSpells, akSpell)
     int spellCost = JMap.getInt(spellData, "spellCost")
+    int reserveMultiplier = JMap.getInt(spellData, "reserveMultiplier")
     string spellKeyword = JMap.getStr(spellData, "Keyword")
     Log("Toggle Off Spell Cost: " + spellCost)
     Log("Toggle Off Spell Keyword: " + spellKeyword)
     if spellKeyword != "Generic"
+        Log("Removing keyworded spell")
         JMap.removeKey( jSpellKeywordMap, spellKeyword)
     Endif
-    JMap.removeKey(jMaintainedSpells, akSpell)
-    ; JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells)
-    
-    int reserveMultiplier = JMap.getInt(JFormMap.getObj(JDB.solveObj(supportedSpellsKey), akSpell), "reserveMultiplier")
+    JFormMap.removeKey(jMaintainedSpells, akSpell)
+
     UpdateReservedMagicka(spellCost * -1, reserveMultiplier)
     UpdateDebuff()
     RemoveKeywordOnForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)

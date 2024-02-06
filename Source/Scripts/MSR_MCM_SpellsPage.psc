@@ -18,7 +18,7 @@ int currentSpellsPage = 0
 event OnPageDraw()
     supportedSpells = JDB.solveObj(supportedSpellsKey)
     supportedSpellsLookup = JMap.object()
-    userConfiguredSpells = JDB.solveObj(userConfiguredSpellsKey, JArray.object())
+    userConfiguredSpells = JDB.solveObj(userConfiguredSpellsKey, JFormMap.object())
     JValue.retain(supportedSpells)
     JValue.retain(supportedSpellsLookup)
     JValue.retain(userConfiguredSpells)
@@ -35,6 +35,7 @@ event OnConfigClose()
     JValue.release(supportedSpells)
     JValue.release(supportedSpellsLookup)
     JValue.release(userConfiguredSpells)
+    MSR_Main.SaveSupportedSpells()
 EndEvent
 
 Function PaginateSpells(int startingPage = 0)
@@ -89,17 +90,20 @@ Function AddSpellBlock(Spell akSpell)
     AddToggleOptionST("Toggle_UtilitySpell___" + spellName, "$MSR_UTILITYSPELL", isUtilitySpell)
 EndFunction
 
+Function UpdateUserConfig(Form spellToUpdate, int spellData)
+    JFormMap.setObj(supportedSpells, spellToUpdate, spellData)
+    JFormMap.setObj(userConfiguredSpells, spellToUpdate, spellData)
+    JDB.solveObjSetter(supportedSpellsKey, supportedSpells)
+    JDB.solveObjSetter(userConfiguredSpellsKey, userConfiguredSpells)
+EndFunction
+
 State Input_Keyword
     Event OnInputAcceptST(string state_id, string newKeyword)
         Form currentSpell = JMap.getForm(supportedSpellsLookup, state_id)
         int spellData = JFormMap.getObj(supportedSpells, currentSpell)
 
         JMap.setStr(spellData, "Keyword", newKeyword)
-        JFormMap.setObj(supportedSpells, currentSpell, spellData)
-        JArray.addForm(userConfiguredSpells, currentSpell)
-
-        JDB.solveObjSetter(supportedSpellsKey, supportedSpells)
-        JDB.solveObjSetter(userConfiguredSpellsKey, userConfiguredSpells)
+        UpdateUserConfig(currentSpell, spellData)
         SetInputOptionValueST(newKeyword)
     EndEvent
 
@@ -120,11 +124,8 @@ State Slider_ReserveMultiplier
         int spellData = JFormMap.getObj(supportedSpells, currentSpell)
 
         JMap.setInt(spellData, "reserveMultiplier", value as int)
-        JFormMap.setObj(supportedSpells, currentSpell, spellData)
-        JArray.addForm(userConfiguredSpells, currentSpell)
-
-        JDB.solveObjSetter(supportedSpellsKey, supportedSpells)
-        JDB.solveObjSetter(userConfiguredSpellsKey, userConfiguredSpells)
+        UpdateUserConfig(currentSpell, spellData)
+        
         SetSliderOptionValueST(value)
     EndEvent
 
@@ -143,14 +144,11 @@ State AddSpell
             SetOptionFlagsST(OPTION_FLAG_None, false, "AddSpell___" + state_id)
             return
         endif
+        
         int spellData = JMap.object()
         JMap.setInt(spellData, "reserveMultiplier", 50)
         JMap.setStr(spellData, "Keyword", "Generic")
-
-        JArray.addForm(userConfiguredSpells, equippedSpell)
-        JFormMap.setObj(supportedSpells, equippedSpell, spellData)
-        JDB.solveObjSetter(supportedSpellsKey, supportedSpells)
-        JDB.solveObjSetter(userConfiguredSpellsKey, userConfiguredSpells)
+        UpdateUserConfig(equippedSpell, spellData)
 
         ForcePageReset()
         Debug.MessageBox(spellAddedMessage)
@@ -165,11 +163,8 @@ State Toggle_Blacklist
         bool currentValue = !JMap.GetInt(spellData, "isBlacklisted") as bool
 
         JMap.setInt(spellData, "isBlacklisted", currentValue as int)
-        JFormMap.setObj(supportedSpells, currentSpell, spellData)
-        JArray.addForm(userConfiguredSpells, currentSpell)
+        UpdateUserConfig(currentSpell, spellData)
 
-        JDB.solveObjSetter(supportedSpellsKey, supportedSpells)
-        JDB.solveObjSetter(userConfiguredSpellsKey, userConfiguredSpells)
         SetToggleOptionValueST(currentValue)
     EndEvent
 
@@ -185,11 +180,8 @@ State Toggle_UtilitySpell
         bool currentValue = !JMap.GetInt(spellData, "isUtilitySpell") as bool
 
         JMap.setInt(spellData, "isUtilitySpell", currentValue as int)
-        JFormMap.setObj(supportedSpells, currentSpell, spellData)
-        JArray.addForm(userConfiguredSpells, currentSpell)
+        UpdateUserConfig(currentSpell, spellData)
 
-        JDB.solveObjSetter(supportedSpellsKey, supportedSpells)
-        JDB.solveObjSetter(userConfiguredSpellsKey, userConfiguredSpells)
         SetToggleOptionValueST(currentValue)
     EndEvent
 
