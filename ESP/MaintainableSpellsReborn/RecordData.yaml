@@ -5,10 +5,18 @@ ModKey: MaintainableSpellsReborn.esp
 GameRelease: SkyrimSE
 ModHeader:
   Stats:
-    NumRecords: 21
-    NextFormID: 44785
+    NumRecords: 24
+    NextFormID: 73790
   Author: DEFAULT
   MasterReferences:
   - Master: Skyrim.esm
+    FileSize: 0
+  - Master: Update.esm
+    FileSize: 0
+  - Master: Dawnguard.esm
+    FileSize: 0
+  - Master: HearthFires.esm
+    FileSize: 0
+  - Master: Dragonborn.esm
     FileSize: 0
   INTV: 1

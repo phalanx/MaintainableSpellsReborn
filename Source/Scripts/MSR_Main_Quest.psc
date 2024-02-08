@@ -9,7 +9,6 @@ string Property MSR_ERROR_JCONTAINERSMISSING = "JContainers appears to be missin
 string Property MSR_ERROR_JCONTAINERSAPIHIGH = "JContainers API Version is higher than expected. Notify the author of Maintainable Spells Reborn and proceed with caution" Auto Hidden
 string Property MSR_ERROR_JCONTAINERSAPILOW = "JContainers API Version is lower than expected. Upgrade JContainers or proceed with caution" Auto Hidden
 
-
 Spell Property magickaDebuffSpell Auto
 ; 0 - Magicka Rate Mult
 ; 1 - Magicka
@@ -18,6 +17,7 @@ Perk Property spellManipulationPerk Auto
 Keyword Property freeToggleOffKeyword Auto
 Keyword Property toggleableKeyword Auto
 Actor Property playerRef Auto
+MagicEffect Property boundWeaponEffect Auto
 
 string dataDir = "Data/MSR/"
 string userDir
@@ -116,11 +116,17 @@ Function Uninstall()
 
     Spell currentSpell = JFormMap.nextKey(jSupportedSpells) as Spell
     while currentSpell != None
-        if !currentSpell.HasKeyword(toggleableKeyword)
+        if currentSpell.HasKeyword(toggleableKeyword)
             RemoveKeywordOnForm(currentSpell.GetNthEffectMagicEffect(0), toggleableKeyword)
-            RemoveKeywordOnForm(currentSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
-            currentSpell = JFormMap.nextKey(jSupportedSpells, currentSpell) as Spell
         endif
+        if currentSpell.HasKeyword(freeToggleOffKeyword)
+            RemoveKeywordOnForm(currentSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
+            if GetEffectArchetypeAsInt(currentSpell.GetNthEffectMagicEffect(0)) == 17 ; Bound Weapon
+                Log("Bound Weapon configured")
+                RemoveMagicEffectFromSpell(currentSpell, boundWeaponEffect, 0, 0, 300)
+            endif
+        endif
+        currentSpell = JFormMap.nextKey(jSupportedSpells, currentSpell) as Spell
     endwhile
 
     JDB.setObj(".MSR", 0)
@@ -128,14 +134,27 @@ Function Uninstall()
     Log("Uninstall Finished")
 EndFunction
 
-Function AddKeywordToSpells(int jNewSpells)
+Function SpellConsistencyCheck(int jNewSpells)
     Spell currentSpell = JFormMap.nextKey(jNewSpells) as Spell
     while currentSpell != None
         if !currentSpell.HasKeyword(toggleableKeyword)
             AddKeywordToForm(currentSpell.GetNthEffectMagicEffect(0), toggleableKeyword)
+            if GetEffectArchetypeAsInt(currentSpell.GetNthEffectMagicEffect(0)) == 17 ; Bound Weapon
+                Log("Bound Weapon configured")
+                AddMagicEffectToSpell(currentSpell, boundWeaponEffect, 0, 0, 300, asConditionList=new string[1])
+            endif
+        endif
+        if currentSpell.HasKeyword(freeToggleOffKeyword)
+            if !JFormMap.hasKey(jMaintainedSpells, currentSpell)
+                Log("Spell has keyword but not in jMaintainedSpells")
+                RemoveKeywordOnForm(currentSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
+            endif
         endif
         currentSpell = JFormMap.nextKey(jNewSpells, currentSpell) as Spell
     endwhile
+EndFunction
+
+Function AddBoundWeaponEffectToSpells(int jNewSpells)
 EndFunction
 
 int Function ReadConfigDirectory(string dirPath)
@@ -154,7 +173,7 @@ int Function ReadConfigDirectory(string dirPath)
         JFormMap.addPairs(jNewSpells, jFileData, true)
         currentFile = JMap.nextKey(jDir, currentFile)
     endwhile
-    AddKeywordToSpells(jNewSpells)
+    SpellConsistencyCheck(jNewSpells)
     return jNewSpells
 EndFunction
 
@@ -219,12 +238,12 @@ bool Function UpdateReservedMagicka(float amount, float multiplier)
         return false
     endif
     currentReservedMagicka += newReserveAmount
-    ; if currentReservedMagicka < 1 && currentReservedMagicka > -1
-    ;     currentReservedMagicka = 0
-    ; elseif currentReservedMagicka < 0
-    ;     currentReservedMagicka = 0
-    ; endif
-    ; currentReservedMagicka = Math.Floor(currentReservedMagicka)
+    if currentReservedMagicka < 1 && currentReservedMagicka > -1
+        currentReservedMagicka = 0
+    elseif currentReservedMagicka < 0
+        currentReservedMagicka = 0
+    endif
+
     return true
 EndFunction
 
@@ -265,11 +284,11 @@ Function __ToggleSpellOn(Spell akSpell, bool wasDualCast)
 
     playerRef.RestoreActorValue("Magicka", spellCost)
     JMap.setFlt(spellData, "spellCost", spellCost)
-    ; int jMaintainedSpells = JDB.solveObj(maintainedSpellsKey, JFormMap.object())
     JFormMap.setObj(jMaintainedSpells, akSpell, spellData)
     Log(JFormMap.allKeysPArray(jMaintainedSpells))
-    ; JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells, true)
+    JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells, true)
     UpdateDebuff()
+    AddKeywordToForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
     AddKeywordToForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
 EndFunction
 
@@ -296,6 +315,13 @@ Function ToggleSpellOff(Spell akSpell)
     GoToState("")
 EndFunction
 
+Function RemoveBoundWeapon()
+    GoToState("ProcessingSpell")
+    Spell currentBoundSpell = Jmap.getForm(jSpellKeywordMap, "Bound") as Spell
+    __ToggleSpellOff(currentBoundSpell)
+    GoToState("")
+EndFunction
+
 Function __ToggleSpellOff(Spell akSpell)
     
     Log("Toggling Spell Off: " + akSPell)
@@ -315,7 +341,7 @@ Function __ToggleSpellOff(Spell akSpell)
         JMap.removeKey( jSpellKeywordMap, spellKeyword)
     Endif
     JFormMap.removeKey(jMaintainedSpells, akSpell)
-
+    JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells, true)
     UpdateReservedMagicka(spellCost * -1, reserveMultiplier)
     UpdateDebuff()
     RemoveKeywordOnForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
@@ -330,7 +356,6 @@ EndFunction
 
 Function __ToggleAllSpellsOff(bool utilityOnly)
     
-    JValue.retain(jMaintainedSpells)
     Spell currentSpell = JFormMap.nextKey(jMaintainedSpells) as Spell
     while currentSpell != None
         if utilityOnly
@@ -342,7 +367,6 @@ Function __ToggleAllSpellsOff(bool utilityOnly)
         endif
         currentSpell = JFormMap.nextKey(jMaintainedSpells, currentSpell) as Spell
     endwhile
-    JValue.release(jMaintainedSpells)
 EndFunction
 
 State ProcessingSpell
@@ -354,10 +378,10 @@ State ProcessingSpell
         Log("Already Processing Spell")
         playerRef.DispelSpell(akSpell)
     EndFunction
-    ; Function ToggleUtilitySpellsOff()
-    ;     Log("Already Processing Spell")
-    ; EndFunction
     Function ToggleAllSpellsOff(bool utilityOnly)
+        Log("Already Processing Spell")
+    EndFunction
+    Function RemoveBoundWeapon()
         Log("Already Processing Spell")
     EndFunction
 EndState

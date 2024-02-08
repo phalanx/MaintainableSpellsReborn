@@ -14,12 +14,11 @@ Effects:
       Unknown1: 0x000000
       Data:
         MutagenObjectType: HasKeywordConditionData
-        Keyword: 007918:MaintainableSpellsReborn.esp
+        Keyword: 00A42C:MaintainableSpellsReborn.esp
       ComparisonValue: 1
-  EntryPoint: ModSpellCost
-  PerkConditionTabCount: 2
-  Modification: Multiply
-  Value: 0
+  EntryPoint: ModSpellDuration
+  PerkConditionTabCount: 3
+  Value: 5962000
 - MutagenObjectType: PerkEntryPointModifyValue
   Conditions:
   - RunOnTabIndex: 1
@@ -28,8 +27,9 @@ Effects:
       Unknown1: 0x000000
       Data:
         MutagenObjectType: HasKeywordConditionData
-        Keyword: 00A42C:MaintainableSpellsReborn.esp
+        Keyword: 007918:MaintainableSpellsReborn.esp
       ComparisonValue: 1
-  EntryPoint: ModSpellDuration
-  PerkConditionTabCount: 3
-  Value: 5962000
+  EntryPoint: ModSpellCost
+  PerkConditionTabCount: 2
+  Modification: Multiply
+  Value: 0
