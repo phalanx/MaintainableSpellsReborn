@@ -1,4 +1,4 @@
-FormKey: 004339:MaintainableSpellsReborn.esp
+FormKey: 000802:MaintainableSpellsReborn.esp
 EditorID: MSR_RemoveAllSpells_Spell
 Name:
   TargetLanguage: English
@@ -13,5 +13,5 @@ Flags:
 Type: LesserPower
 CastType: FireAndForget
 Effects:
-- BaseEffect: 00433A:MaintainableSpellsReborn.esp
+- BaseEffect: 000803:MaintainableSpellsReborn.esp
   Data: {}

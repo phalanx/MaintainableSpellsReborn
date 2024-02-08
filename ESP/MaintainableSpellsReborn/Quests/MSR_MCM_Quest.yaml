@@ -1,4 +1,4 @@
-FormKey: 005362:MaintainableSpellsReborn.esp
+FormKey: 000804:MaintainableSpellsReborn.esp
 EditorID: MSR_MCM_Quest
 VirtualMachineAdapter:
   Scripts:
@@ -17,7 +17,7 @@ VirtualMachineAdapter:
   Aliases:
   - Property:
       Name: ''
-      Object: 005362:MaintainableSpellsReborn.esp
+      Object: 000804:MaintainableSpellsReborn.esp
       Alias: 0
     Scripts:
     - Name: nl_mcm_playerloadalias

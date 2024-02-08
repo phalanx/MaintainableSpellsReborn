@@ -4,38 +4,38 @@ VirtualMachineAdapter:
   Scripts:
   - Name: MSR_Main_Quest
     Properties:
-    - MutagenObjectType: ScriptObjectListProperty
-      Name: mentalLoadDebuffs
-      Objects:
-      - Name: ''
-        Object: 005E28:MaintainableSpellsReborn.esp
-      - Name: ''
-        Object: 00638C:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: spellManipulationPerk
-      Object: 007917:MaintainableSpellsReborn.esp
-    - MutagenObjectType: ScriptObjectListProperty
-      Name: backlashDebuffs
-      Objects:
-      - Name: ''
-        Object: 03F940:MaintainableSpellsReborn.esp
-      - Name: ''
-        Object: 044A44:MaintainableSpellsReborn.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: toggleableKeyword
-      Object: 00A42C:MaintainableSpellsReborn.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: freeToggleOffKeyword
-      Object: 007918:MaintainableSpellsReborn.esp
+      Name: magickaDebuffSpell
+      Object: 000801:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
       Name: PlayerRef
       Object: 000014:Skyrim.esm
     - MutagenObjectType: ScriptObjectProperty
       Name: boundWeaponEffect
-      Object: 00B453:MaintainableSpellsReborn.esp
+      Object: 00080E:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectListProperty
+      Name: mentalLoadDebuffs
+      Objects:
+      - Name: ''
+        Object: 000806:MaintainableSpellsReborn.esp
+      - Name: ''
+        Object: 000807:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectListProperty
+      Name: backlashDebuffs
+      Objects:
+      - Name: ''
+        Object: 000811:MaintainableSpellsReborn.esp
+      - Name: ''
+        Object: 000814:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: magickaDebuffSpell
-      Object: 001D8A:MaintainableSpellsReborn.esp
+      Name: freeToggleOffKeyword
+      Object: 00080A:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: spellManipulationPerk
+      Object: 000809:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: toggleableKeyword
+      Object: 00080D:MaintainableSpellsReborn.esp
   FileName: ''
   Aliases:
   - Property:
@@ -46,14 +46,14 @@ VirtualMachineAdapter:
     - Name: MSR_DetectSpellCast
       Properties:
       - MutagenObjectType: ScriptObjectProperty
-        Name: toggleableKeyword
-        Object: 00A42C:MaintainableSpellsReborn.esp
-      - MutagenObjectType: ScriptObjectProperty
         Name: freeToggleOffKeyword
-        Object: 007918:MaintainableSpellsReborn.esp
+        Object: 00080A:MaintainableSpellsReborn.esp
       - MutagenObjectType: ScriptObjectProperty
         Name: MSR_Main
         Object: 000D62:MaintainableSpellsReborn.esp
+      - MutagenObjectType: ScriptObjectProperty
+        Name: toggleableKeyword
+        Object: 00080D:MaintainableSpellsReborn.esp
 Flags:
 - StartGameEnabled
 - 0x10
@@ -63,29 +63,7 @@ Aliases:
   Flags: []
   ForcedReference: 000014:Skyrim.esm
   Spells:
-  - 05AD5C:Skyrim.esm
-  - 004339:MaintainableSpellsReborn.esp
-  - 03AE9F:Skyrim.esm
-  - 03AEA2:Skyrim.esm
-  - 03AEA3:Skyrim.esm
-  - 05AD5D:Skyrim.esm
-  - 05AD5E:Skyrim.esm
-  - 051B16:Skyrim.esm
-  - 0CDB70:Skyrim.esm
-  - 043324:Skyrim.esm
-  - 08F3EB:Skyrim.esm
-  - 008EA2:MaintainableSpellsReborn.esp
-  - 0211EC:Skyrim.esm
-  - 0211ED:Skyrim.esm
-  - 0211EB:Skyrim.esm
-  - 01CE06:Dragonborn.esm
-  - 01772D:Dragonborn.esm
-  - 0640B6:Skyrim.esm
-  - 0204C3:Skyrim.esm
-  - 0204C4:Skyrim.esm
-  - 0204C5:Skyrim.esm
-  - 10DDEC:Skyrim.esm
-  - 0038B5:Dawnguard.esm
-  - 02B53F:MaintainableSpellsReborn.esp
-  - 065BD7:Skyrim.esm
+  - 000802:MaintainableSpellsReborn.esp
+  - 00080C:MaintainableSpellsReborn.esp
+  - 000810:MaintainableSpellsReborn.esp
   VoiceTypes: Null

@@ -1,4 +1,4 @@
-FormKey: 001D8A:MaintainableSpellsReborn.esp
+FormKey: 000801:MaintainableSpellsReborn.esp
 EditorID: MSR_ReservedMagicka_Spell
 Name:
   TargetLanguage: English
@@ -13,5 +13,5 @@ Flags:
 - NoAbsorbOrReflect
 Type: Ability
 Effects:
-- BaseEffect: 001D89:MaintainableSpellsReborn.esp
+- BaseEffect: 000800:MaintainableSpellsReborn.esp
   Data: {}

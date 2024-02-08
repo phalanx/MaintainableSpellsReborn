@@ -1,4 +1,4 @@
-FormKey: 005E28:MaintainableSpellsReborn.esp
+FormKey: 000806:MaintainableSpellsReborn.esp
 EditorID: MSR_MagickaRateDebuff_Spell
 Name:
   TargetLanguage: English
@@ -13,5 +13,5 @@ Flags:
 - NoAbsorbOrReflect
 Type: Ability
 Effects:
-- BaseEffect: 005E27:MaintainableSpellsReborn.esp
+- BaseEffect: 000805:MaintainableSpellsReborn.esp
   Data: {}

@@ -1,4 +1,4 @@
-FormKey: 03F943:MaintainableSpellsReborn.esp
+FormKey: 000813:MaintainableSpellsReborn.esp
 EditorID: MSR_Backlash_Magicka
 Name:
   TargetLanguage: English
@@ -18,4 +18,4 @@ CastingSoundLevel: Normal
 Sounds: []
 Description:
   TargetLanguage: English
-  Value: Overtaxing your mind has temporarily reduced your Magicka by <mag>
+  Value: Overtaxing your mind has reduced your Magicka by <mag> for <dur> seconds

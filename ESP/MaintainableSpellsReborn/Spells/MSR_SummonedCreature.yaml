@@ -1,4 +1,4 @@
-FormKey: 02B53F:MaintainableSpellsReborn.esp
+FormKey: 000810:MaintainableSpellsReborn.esp
 EditorID: MSR_SummonedCreature
 Name:
   TargetLanguage: English
@@ -9,5 +9,5 @@ Description:
   Value: ''
 Type: Ability
 Effects:
-- BaseEffect: 01C23E:MaintainableSpellsReborn.esp
+- BaseEffect: 00080F:MaintainableSpellsReborn.esp
   Data: {}

@@ -1,4 +1,4 @@
-FormKey: 03F940:MaintainableSpellsReborn.esp
+FormKey: 000811:MaintainableSpellsReborn.esp
 EditorID: MSR_Backlash_MagickaRate_Spell
 Name:
   TargetLanguage: English
@@ -12,6 +12,6 @@ Flags:
 - NoAbsorbOrReflect
 CastType: FireAndForget
 Effects:
-- BaseEffect: 03F941:MaintainableSpellsReborn.esp
+- BaseEffect: 000812:MaintainableSpellsReborn.esp
   Data:
     Duration: 30

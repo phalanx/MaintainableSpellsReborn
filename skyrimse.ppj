@@ -6,12 +6,12 @@
     Output="Scripts" 
     Optimize="false" 
     Release="false" 
-    Zip="false"
+    Zip="true"
     Package="false"
     Final="false">
     <Variables>
         <!-- Set the name of your mod: -->
-        <Variable Name="ModName" Value="MaintainableSpells" />
+        <Variable Name="ModName" Value="MaintainableSpellsReborn" />
         <!-- The folder where you store all of your mods -->
         <Variable Name="ModsFolder" Value="E:\Skyrim\1.6.640\Authoring\Maintainable Spells Reborn\Mods" />
     </Variables>
@@ -34,7 +34,7 @@
     <Packages Output=".">
         <Package Name="@ModName" RootDir=".">
             <Match In="Scripts">*.pex</Match>
-            <!-- <Match In="interface\translations">*.txt</Match> -->
+            <Match In="interface\translations">*.txt</Match>
         </Package>
         <!-- If you have any texture files, uncomment the following to create a Textures .bsa archive with texture files -->
         <!-- <Package Name="@ModName - Textures" RootDir=".">
@@ -46,7 +46,9 @@
         <ZipFile Name="@ModName" RootDir="." Compression="deflate">
             <Include>@ModName.esp</Include>
             <Include NoRecurse="true">*.bsa</Include>
-            <Match In="Scripts\Source">*.psc</Match>
+            <Match In="Source\Scripts">*.psc</Match>
+            <Match In="Scripts">*.pex</Match>
+            <Match In="MSR">*.json</Match>
         </ZipFile>
     </ZipFiles>
     <!-- This will remove any *.bsa files in this directory *after* the build, if there are any. Set UseInBuild="false" to disable. -->
