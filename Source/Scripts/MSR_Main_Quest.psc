@@ -148,28 +148,29 @@ Function Uninstall()
     Log("Uninstall Finished")
 EndFunction
 
+Function UpdateSpell(Spell akSpell)
+    if !akSpell.HasKeyword(toggleableKeyword)
+        AddKeywordToForm(akSpell.GetNthEffectMagicEffect(0), toggleableKeyword)
+        int iArchetype = GetEffectArchetypeAsInt(akSpell.GetNthEffectMagicEffect(0))
+        if iArchetype == 17 ; Bound Weapon
+            AddMagicEffectToSpell(akSpell, boundWeaponEffect, 0, 0, 1, asConditionList=new string[1])
+        endif
+    endif
+    if JFormMap.hasKey(jMaintainedSpells, akSpell)
+        if !akSpell.HasKeyword(freeToggleOffKeyword)
+           AddKeywordToForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
+        endif
+    elseif akSpell.HasKeyword(freeToggleOffKeyword)
+        RemoveKeywordOnForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
+    endif
+EndFunction
+
 Function SpellConsistencyCheck(int jNewSpells)
     Spell currentSpell = JFormMap.nextKey(jNewSpells) as Spell
     while currentSpell != None
-        if !currentSpell.HasKeyword(toggleableKeyword)
-            AddKeywordToForm(currentSpell.GetNthEffectMagicEffect(0), toggleableKeyword)
-            int iArchetype = GetEffectArchetypeAsInt(currentSpell.GetNthEffectMagicEffect(0))
-            if iArchetype == 17 ; Bound Weapon
-                AddMagicEffectToSpell(currentSpell, boundWeaponEffect, 0, 0, 1, asConditionList=new string[1])
-            endif
-        endif
-        if JFormMap.hasKey(jMaintainedSpells, currentSpell)
-            if !currentSpell.HasKeyword(freeToggleOffKeyword)
-               AddKeywordToForm(currentSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
-            endif
-        elseif currentSpell.HasKeyword(freeToggleOffKeyword)
-            RemoveKeywordOnForm(currentSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
-        endif
+        UpdateSpell(currentSpell)
         currentSpell = JFormMap.nextKey(jNewSpells, currentSpell) as Spell
     endwhile
-EndFunction
-
-Function AddBoundWeaponEffectToSpells(int jNewSpells)
 EndFunction
 
 int Function ReadConfigDirectory(string dirPath)

@@ -95,6 +95,7 @@ Function UpdateUserConfig(Form spellToUpdate, int spellData)
     JFormMap.setObj(userConfiguredSpells, spellToUpdate, spellData)
     JDB.solveObjSetter(supportedSpellsKey, supportedSpells)
     JDB.solveObjSetter(userConfiguredSpellsKey, userConfiguredSpells)
+    MSR_Main.UpdateSpell(spellToUpdate as Spell)
 EndFunction
 
 State Input_Keyword
