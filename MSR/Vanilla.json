@@ -2,6 +2,14 @@
   "__metaInfo": {
     "typeName": "JFormMap"
   },
+  "__formData|Skyrim.esm|0x8f3eb": {
+    "Keyword": "Generic",
+    "reserveMultiplier": 50
+  },
+  "__formData|Skyrim.esm|0x43324": {
+    "Keyword": "Generic",
+    "reserveMultiplier": 50
+  },
   "__formData|Skyrim.esm|0x3ae9f": {
     "Keyword": "MagicCloak",
     "reserveMultiplier": 50
@@ -18,10 +26,6 @@
     "Keyword": "MagicCloak",
     "reserveMultiplier": 50
   },
-  "__formData|Skyrim.esm|0x43324": {
-    "Keyword": "Generic",
-    "reserveMultiplier": 50
-  },
   "__formData|Skyrim.esm|0x51b16": {
     "Keyword": "MagicArmorSpell",
     "reserveMultiplier": 50
@@ -36,10 +40,6 @@
   },
   "__formData|Skyrim.esm|0x5ad5e": {
     "Keyword": "MagicArmorSpell",
-    "reserveMultiplier": 50
-  },
-  "__formData|Skyrim.esm|0x8f3eb": {
-    "Keyword": "Generic",
     "reserveMultiplier": 50
   },
   "__formData|Skyrim.esm|0xcdb70": {
@@ -61,5 +61,25 @@
   "__formData|Dragonborn.esm|0x1ce06": {
     "Keyword": "Bound",
     "reserveMultiplier": 50
+  },
+  "__formData|Skyrim.esm|0x640b6": {
+    "Keyword": "Summon",
+    "reserveMultiplier": 50
+  },
+  "__formData|Skyrim.esm|0x204C3": {
+      "Keyword": "Summon",
+      "reserveMultiplier": 50
+  },
+  "__formData|Skyrim.esm|0x204C4": {
+      "Keyword": "Summon",
+      "reserveMultiplier": 50
+  },
+  "__formData|Skyrim.esm|0x204C5": {
+      "Keyword": "Summon",
+      "reserveMultiplier": 50
+  },
+  "__formData|Skyrim.esm|0x10ddec": {
+      "Keyword": "Summon",
+      "reserveMultiplier": 50
   }
 }

@@ -12,5 +12,7 @@ EndEvent
 
 Event OnEffectFinish(Actor akTarget, Actor akCaster)
     Log("Bound Weapon Ended")
-    MSR_Main.RemoveBoundWeapon()
+    if akCaster == MSR_Main.playerRef
+        MSR_Main.RemoveConjuration("Bound")
+    endif
 EndEvent

@@ -4,12 +4,12 @@ VirtualMachineAdapter:
   Scripts:
   - Name: MSR_Dispel_Effect
     Properties:
-    - MutagenObjectType: ScriptBoolProperty
-      Name: utilityOnly
-      Data: True
     - MutagenObjectType: ScriptObjectProperty
       Name: MSR_Main
       Object: 000D62:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptBoolProperty
+      Name: utilityOnly
+      Data: True
 Name:
   TargetLanguage: English
   Value: Release Utility Spells

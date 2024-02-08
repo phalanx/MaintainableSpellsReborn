@@ -29,8 +29,11 @@ Event OnSpellCast(Form akSpell)
         dualCasting = true
     endif
     Spell spellCast = akSpell as Spell
-    ; int spellArchetype = GetEffectArchetypeAsInt()
+    if spellCast == None
+        return
+    endif
     Log(spellCast + " cast")
+    Log("Archetype: " + GetEffectArchetypeAsInt(spellCast.GetNthEffectMagicEffect(0))) ; 22 or 17 for reanimate/summon
     int jSupportedSpells = JDB.solveObj(supportedSpellsKey)
     if jSupportedSpells == 0
         Log("Err: No supported spells in JDB")

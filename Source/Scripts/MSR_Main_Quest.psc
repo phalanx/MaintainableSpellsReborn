@@ -2,6 +2,7 @@ Scriptname MSR_Main_Quest extends Quest
 {The documentation string.}
 
 import PO3_SKSEFunctions
+import PO3_Events_AME
 int expectedJContainersAPIVersion = 4
 int expectedJContainersFeatureVersion = 2
 
@@ -118,13 +119,14 @@ Function Uninstall()
     while currentSpell != None
         if currentSpell.HasKeyword(toggleableKeyword)
             RemoveKeywordOnForm(currentSpell.GetNthEffectMagicEffect(0), toggleableKeyword)
+            int iArchetype = GetEffectArchetypeAsInt(currentSpell.GetNthEffectMagicEffect(0))
+            if iArchetype == 17 ; Bound Weapon
+                Log("Bound Weapon configured")
+                RemoveMagicEffectFromSpell(currentSpell, boundWeaponEffect, 0, 0, 1)
+            endif
         endif
         if currentSpell.HasKeyword(freeToggleOffKeyword)
             RemoveKeywordOnForm(currentSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
-            if GetEffectArchetypeAsInt(currentSpell.GetNthEffectMagicEffect(0)) == 17 ; Bound Weapon
-                Log("Bound Weapon configured")
-                RemoveMagicEffectFromSpell(currentSpell, boundWeaponEffect, 0, 0, 300)
-            endif
         endif
         currentSpell = JFormMap.nextKey(jSupportedSpells, currentSpell) as Spell
     endwhile
@@ -139,16 +141,17 @@ Function SpellConsistencyCheck(int jNewSpells)
     while currentSpell != None
         if !currentSpell.HasKeyword(toggleableKeyword)
             AddKeywordToForm(currentSpell.GetNthEffectMagicEffect(0), toggleableKeyword)
-            if GetEffectArchetypeAsInt(currentSpell.GetNthEffectMagicEffect(0)) == 17 ; Bound Weapon
-                Log("Bound Weapon configured")
-                AddMagicEffectToSpell(currentSpell, boundWeaponEffect, 0, 0, 300, asConditionList=new string[1])
+            int iArchetype = GetEffectArchetypeAsInt(currentSpell.GetNthEffectMagicEffect(0))
+            if iArchetype == 17 ; Bound Weapon
+                AddMagicEffectToSpell(currentSpell, boundWeaponEffect, 0, 0, 1, asConditionList=new string[1])
             endif
         endif
-        if currentSpell.HasKeyword(freeToggleOffKeyword)
-            if !JFormMap.hasKey(jMaintainedSpells, currentSpell)
-                Log("Spell has keyword but not in jMaintainedSpells")
-                RemoveKeywordOnForm(currentSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
+        if JFormMap.hasKey(jMaintainedSpells, currentSpell)
+            if !currentSpell.HasKeyword(freeToggleOffKeyword)
+               AddKeywordToForm(currentSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
             endif
+        elseif currentSpell.HasKeyword(freeToggleOffKeyword)
+            RemoveKeywordOnForm(currentSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
         endif
         currentSpell = JFormMap.nextKey(jNewSpells, currentSpell) as Spell
     endwhile
@@ -274,6 +277,16 @@ Function __ToggleSpellOn(Spell akSpell, bool wasDualCast)
         return
     endif
 
+    int spellArchetype = GetEffectArchetypeAsInt(akSpell.GetNthEffectMagicEffect(0))
+    if spellArchetype == 22 || spellArchetype == 18 ; 22 for reanimate/18 for summon
+        int handler = ModEvent.Create("MSR_SummonSpellCast")
+        if handler
+            ModEvent.Send(handler)
+        else
+            Debug.Notification("MSR ERR: Could not send SummonSpell Event")
+        endif
+    endif
+
     ResolveKeywordedMagicEffect(akSpell, JMap.getStr(spellData, "Keyword"))
 
     if !UpdateReservedMagicka(spellCost, reserveMultiplier)
@@ -289,7 +302,7 @@ Function __ToggleSpellOn(Spell akSpell, bool wasDualCast)
     JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells, true)
     UpdateDebuff()
     AddKeywordToForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
-    AddKeywordToForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
+
 EndFunction
 
 Function ResolveKeywordedMagicEffect(Spell akSpell, string spellKeyword)
@@ -315,9 +328,9 @@ Function ToggleSpellOff(Spell akSpell)
     GoToState("")
 EndFunction
 
-Function RemoveBoundWeapon()
+Function RemoveConjuration(string asKeyword)
     GoToState("ProcessingSpell")
-    Spell currentBoundSpell = Jmap.getForm(jSpellKeywordMap, "Bound") as Spell
+    Spell currentBoundSpell = Jmap.getForm(jSpellKeywordMap, asKeyword) as Spell
     __ToggleSpellOff(currentBoundSpell)
     GoToState("")
 EndFunction
@@ -381,7 +394,7 @@ State ProcessingSpell
     Function ToggleAllSpellsOff(bool utilityOnly)
         Log("Already Processing Spell")
     EndFunction
-    Function RemoveBoundWeapon()
+    Function RemoveConjuration(string asKeyword)
         Log("Already Processing Spell")
     EndFunction
 EndState
