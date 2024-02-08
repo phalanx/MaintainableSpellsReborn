@@ -14,6 +14,9 @@ Spell Property magickaDebuffSpell Auto
 ; 0 - Magicka Rate Mult
 ; 1 - Magicka
 Spell[] Property mentalLoadDebuffs Auto
+; 0 - Magicka Rate Mult
+; 1 - Magicka
+Spell[] Property backlashDebuffs Auto
 Perk Property spellManipulationPerk Auto
 Keyword Property freeToggleOffKeyword Auto
 Keyword Property toggleableKeyword Auto
@@ -32,6 +35,10 @@ string userConfiguredSpellsKey = ".MSR.userConfiguredSpells" ; JArray
 ; float perSpellDebuffAmount
 ; int perSpellThreshold
 ; float dualCastMultiplier
+; int backlashType ; 0 - DispelOnly, 1 - MagickaRate, 2 - Magicka, 3 - Both
+; float backlashDuration
+; float backlashMagickaRateMultMag
+; float backlashMagickaMag
 string configKey = ".MSR.Config."
 
 int jSpellKeywordMap
@@ -79,6 +86,11 @@ Event OnInit()
     JDB.solveIntSetter(configKey + "perSpellThreshold", 3, true)
     JDB.solveIntSetter(configKey + "perSpellDebuffType", 0, true)
     JDB.solveFltSetter(configKey + "dualCastMultiplier", 2.8, true)
+
+    JDB.solveIntSetter(configKey + "backlashType", 3, true)
+    JDB.solveIntSetter(configKey + "backlashDuration", 30, true)
+    JDB.solveFltSetter(configKey + "backlashMagickaRateMult", 30, true)
+    JDB.solveFltSetter(configKey + "backlashMagicka", 30, true)
 
     JDB.solveObjSetter(supportedSpellsKey, JFormMap.object(), true)
     JDB.solveObjSetter(maintainedSpellsKey, JFormMap.object(), true)
@@ -252,7 +264,13 @@ EndFunction
 
 Function Backlash()
     Debug.Notification("Spells Backlash")
-    ToggleAllSpellsOff(false)
+    __ToggleAllSpellsOff(false)
+    backlashDebuffs[0].SetNthEffectDuration(0, JDB.solveInt(configKey + "backlashDuration"))
+    backlashDebuffs[1].SetNthEffectDuration(0, JDB.solveInt(configKey + "backlashDuration"))
+    backlashDebuffs[0].SetNthEffectMagnitude(0, JDB.solveFlt(configKey + "backlashMagickaRateMult"))
+    backlashDebuffs[1].SetNthEffectMagnitude(0, JDB.solveFlt(configKey + "backlashMagicka"))
+    backlashDebuffs[0].Cast(playerRef)
+    backlashDebuffs[1].Cast(playerRef)
 EndFunction
 
 Function ToggleSpellOn(Spell akSpell, bool wasDualCast)
@@ -291,6 +309,7 @@ Function __ToggleSpellOn(Spell akSpell, bool wasDualCast)
 
     if !UpdateReservedMagicka(spellCost, reserveMultiplier)
         Log("Backlash triggered")
+        playerRef.DispelSpell(akSpell)
         GoToState("")
         return
     endif

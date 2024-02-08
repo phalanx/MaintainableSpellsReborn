@@ -4,11 +4,18 @@ MSR_Main_Quest Property MSR_Main Auto
 
 string configKey = ".MSR.Config."
 string[] perSpellDebuffTypeStrings
+string[] backlashTypeStrings
 
 event OnInit()
     perSpellDebuffTypeStrings = new string[2]
     perSpellDebuffTypeStrings[0] = "$MSR_perSpellDebuffType_MagickaRate"
     perSpellDebuffTypeStrings[1] = "$MSR_perSpellDebuffType_Magicka"
+
+    backlashTypeStrings = new string[4]
+    backlashTypeStrings[0] = "$MSR_Backlash_DispelOnly"
+    backlashTypeStrings[1] = "$MSR_Backlash_MagickaRate"
+    backlashTypeStrings[2] = "$MSR_Backlash_Magicka"
+    backlashTypeStrings[3] = "$MSR_Backlash_Both"
     RegisterModule("$MSR_SETTINGS", 0)
 endevent
 
@@ -19,13 +26,20 @@ endevent
 
 event OnPageDraw()
     SetCursorFillMode(TOP_TO_BOTTOM)
-    AddHeaderOption("$MSR_RESERVATIONHEADER")
+    AddHeaderOption(FONT_PRIMARY("$MSR_RESERVATIONHEADER"))
     AddMenuOptionST("Menu_perSpellDebuffType", "$MSR_perSpellDebuffType", perSpellDebuffTypeStrings[JDB.solveInt(configKey + "perSpellDebuffType")])
     AddSliderOptionST("Slider_perSpellDebuffAmount", "$MSR_perSpellDebuffAmount", JDB.solveFlt(configKey + "perSpellDebuffAmount"))
     AddSliderOptionST("Slider_perSpellThreshold", "$MSR_perSpellThreshold", JDB.solveFlt(configKey + "perSpellThreshold"))
     AddSliderOptionST("Slider_dualCastModifier", "$MSR_dualCastModifier", JDB.solveFlt(configKey + "dualCastMultiplier", 2.8), "{2}")
+
+    AddHeaderOption(FONT_PRIMARY("$MSR_BACKLASHHEADER"))
+    AddMenuOptionST("Menu_BacklashType", "$MSR_BacklashType", backlashTypeStrings[JDB.solveInt(configKey + "backlashType")])
+    AddSliderOptionST("Slider_Mag___backlashMagickaRateMult", "$MSR_MAG_backlashMagickaRateMult", JDB.solveFlt(configKey + "backlashMagickaRateMult"))
+    AddSliderOptionST("Slider_Mag___backlashMagicka", "$MSR_MAG_backlashMagicka", JDB.solveFlt(configKey + "backlashMagicka"))
+    AddSliderOptionST("Slider_Backlash_Duration", "$MSR_backlashDuration", JDB.solveInt(configKey + "backlashDuration"))
+
     SetCursorPosition(1)
-    AddHeaderOption("$MSR_DEBUGHEADER")
+    AddHeaderOption(FONT_PRIMARY("$MSR_DEBUGHEADER"))
     AddToggleOptionST("Toggle___debugLogging", "$MSR_debugLogging", JDB.solveInt(".MSR.Config.debugLogging") as bool)
 endevent
 
@@ -106,5 +120,46 @@ State Toggle
     EndEvent
     Event OnHighlightST(string state_id)
         SetInfoText("$MSR_" + state_id + "_HELP")
+    EndEvent
+EndState
+
+State Menu_BacklashType
+    Event OnMenuOpenST(string state_id)
+        SetMenuDialog(backlashTypeStrings, JDB.solveInt(configKey + "backlashType"), 3)
+    EndEvent
+
+    Event OnMenuAcceptST(string state_id, int index)
+        JDB.solveIntSetter(configKey + "backlashType", index)
+        SetMenuOptionValueST(backlashTypeStrings[JDB.solveInt(configKey + "backlashType")])
+    EndEvent
+
+    Event OnHighlightST(string state_id)
+        SetInfoText("$MSR_BacklashType_HELP")
+    EndEvent
+EndState
+
+State Slider_Mag
+    Event OnSliderOpenST(string state_id)
+        SetSliderDialog(JDB.solveFlt(configKey + state_id), 0, 100, 1, 30)
+    EndEvent
+    Event OnSliderAcceptST(string state_id, float value)
+        JDB.solveFltSetter(configKey + state_id, value, true)
+        SetSliderOptionValueST(value)
+    EndEvent
+    Event OnHighlightST(string state_id)
+        SetInfoText("$MSR_MAG_" + state_id + "_HELP")
+    EndEvent
+EndState
+
+State Slider_Backlash_Duration
+    Event OnSliderOpenST(string state_id)
+        SetSliderDialog(JDB.solveFlt(configKey + "backlashDuration"), 0, 100, 1, 30)
+    EndEvent
+    Event OnSliderAcceptST(string state_id, float value)
+        JDB.solveFltSetter(configKey + "backlashDuration", value, true)
+        SetSliderOptionValueST(value)
+    EndEvent
+    Event OnHighlightST(string state_id)
+        SetInfoText("$MSR_backlashDuration_HELP")
     EndEvent
 EndState
