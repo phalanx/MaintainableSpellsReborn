@@ -158,7 +158,6 @@ State AddSpell
         endif
         
         int spellData = JMap.object()
-        JMap.setInt(spellData, "reserveMultiplier", 50)
         JMap.setStr(spellData, "Keyword", "Generic")
         UpdateUserConfig(equippedSpell, spellData)
 
