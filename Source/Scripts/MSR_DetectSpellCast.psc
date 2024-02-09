@@ -40,7 +40,10 @@ Event OnSpellCast(Form akSpell)
         return
     endif
 
-    if spellCast.HasKeyword(freeToggleOffKeyword)
+    if spellCast.HasKeyword(MSR_Main.blackListedKeyword)
+        Log("Blacklisted spell detected")
+        return
+    elseif spellCast.HasKeyword(freeToggleOffKeyword)
         Log("Maintained spell detected")
         MSR_Main.ToggleSpellOff(spellCast)
     elseif spellCast.HasKeyword(toggleableKeyword)

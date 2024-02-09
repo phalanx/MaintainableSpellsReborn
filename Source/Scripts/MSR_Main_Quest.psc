@@ -20,6 +20,7 @@ Spell[] Property backlashDebuffs Auto
 Perk Property spellManipulationPerk Auto
 Keyword Property freeToggleOffKeyword Auto
 Keyword Property toggleableKeyword Auto
+Keyword Property blackListedKeyword Auto
 Actor Property playerRef Auto
 MagicEffect Property boundWeaponEffect Auto
 
@@ -148,7 +149,17 @@ Function Uninstall()
     Log("Uninstall Finished")
 EndFunction
 
-Function UpdateSpell(Spell akSpell)
+Function UpdateSpell(Spell akSpell, bool blacklisted)
+    if blacklisted
+        if !akSpell.HasKeyword(blackListedKeyword)
+            AddKeywordToForm(akSPell, blackListedKeyword)
+        endif
+    else
+        if akSpell.HasKeyword(blackListedKeyword)
+            RemoveKeywordOnForm(akSpell, blackListedKeyword)
+        endif
+    endif
+
     if !akSpell.HasKeyword(toggleableKeyword)
         AddKeywordToForm(akSpell.GetNthEffectMagicEffect(0), toggleableKeyword)
         int iArchetype = GetEffectArchetypeAsInt(akSpell.GetNthEffectMagicEffect(0))
@@ -167,8 +178,10 @@ EndFunction
 
 Function SpellConsistencyCheck(int jNewSpells)
     Spell currentSpell = JFormMap.nextKey(jNewSpells) as Spell
+    int currentSpellData = JMap.object()
     while currentSpell != None
-        UpdateSpell(currentSpell)
+        currentSpellData = JFormMap.GetObj(jNewSpells, currentSpell)
+        UpdateSpell(currentSpell, JMap.getInt(currentSpellData, "isBlackListed", 0) as bool)
         currentSpell = JFormMap.nextKey(jNewSpells, currentSpell) as Spell
     endwhile
 EndFunction

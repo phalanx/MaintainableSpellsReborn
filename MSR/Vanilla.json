@@ -4,7 +4,8 @@
   },
   "__formData|Skyrim.esm|0x8f3eb": {
     "Keyword": "Generic",
-    "reserveMultiplier": 50
+    "reserveMultiplier": 50,
+    "isBlacklisted": 1
   },
   "__formData|Skyrim.esm|0x43324": {
     "Keyword": "Generic",
