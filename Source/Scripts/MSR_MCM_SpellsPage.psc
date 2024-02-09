@@ -89,10 +89,10 @@ EndFunction
 Function AddSpellBlock(Spell akSpell)
     int spellData = JFormMap.getObj(supportedSpells, akSpell)
     string spellName = akSPell.getName()
-    string currentKeyword = JMap.GetStr(spellData,"Keyword")
-    int reserveMultiplier = JMap.getInt(spellData, "reserveMultiplier")
-    bool isBlackListed = JMap.getInt(spellData, "isBlacklisted") as bool
-    bool isUtilitySpell = JMap.getInt(spellData, "isUtilitySpell") as bool
+    string currentKeyword = JMap.GetStr(spellData,"Keyword", "Generic")
+    int reserveMultiplier = JMap.getInt(spellData, "reserveMultiplier", -1)
+    bool isBlackListed = JMap.getInt(spellData, "isBlacklisted", 0) as bool
+    bool isUtilitySpell = JMap.getInt(spellData, "isUtilitySpell", 0) as bool
   
     AddTextOptionST("NoState___" + spellName, FONT_PRIMARY(spellName), None)
     AddInputOptionST("Input_Keyword___" + spellName, "$MSR_INPUT_KEYWORD", currentKeyword)
@@ -128,7 +128,7 @@ State Slider_ReserveMultiplier
     Event OnSliderOpenST(string state_id)
         Form currentSpell = JMap.getForm(supportedSpellsLookup, state_id)
         int spellData = JFormMap.getObj(supportedSpells, currentSpell)
-        SetSliderDialog(JMap.getInt(spellData, "reserveMultiplier"), 0, 100, 1, 50)
+        SetSliderDialog(JMap.getInt(spellData, "reserveMultiplier"), -1, 100, 1, 50)
     EndEvent
     
     Event OnSliderAcceptST(string state_id, float value)

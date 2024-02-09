@@ -31,6 +31,7 @@ event OnPageDraw()
     AddSliderOptionST("Slider_perSpellDebuffAmount", "$MSR_perSpellDebuffAmount", JDB.solveFlt(configKey + "perSpellDebuffAmount"))
     AddSliderOptionST("Slider_perSpellThreshold", "$MSR_perSpellThreshold", JDB.solveFlt(configKey + "perSpellThreshold"))
     AddSliderOptionST("Slider_dualCastModifier", "$MSR_dualCastModifier", JDB.solveFlt(configKey + "dualCastMultiplier", 2.8), "{2}")
+    AddSliderOptionST("Slider_reserveMultiplier", "$MSR_reserveMultiplier", JDB.solveFlt(configKey + "reserveMultiplier"))
 
     AddHeaderOption(FONT_PRIMARY("$MSR_BACKLASHHEADER"))
     AddMenuOptionST("Menu_BacklashType", "$MSR_BacklashType", backlashTypeStrings[JDB.solveInt(configKey + "backlashType")])

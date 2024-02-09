@@ -3,84 +3,63 @@
     "typeName": "JFormMap"
   },
   "__formData|Skyrim.esm|0x8f3eb": {
-    "Keyword": "Generic",
-    "reserveMultiplier": 50,
-    "isBlacklisted": 1
+    "Keyword": "Generic"
   },
   "__formData|Skyrim.esm|0x43324": {
-    "Keyword": "Generic",
-    "reserveMultiplier": 50
+    "Keyword": "Generic"
   },
   "__formData|Skyrim.esm|0x3ae9f": {
-    "Keyword": "MagicCloak",
-    "reserveMultiplier": 50
+    "Keyword": "MagicCloak"
   },
   "__formData|Skyrim.esm|0x3aea2": {
-    "Keyword": "MagicCloak",
-    "reserveMultiplier": 50
+    "Keyword": "MagicCloak"
   },
   "__formData|Skyrim.esm|0x3aea3": {
-    "Keyword": "MagicCloak",
-    "reserveMultiplier": 50
+    "Keyword": "MagicCloak"
   },
   "__formData|Dragonborn.esm|0x1772d": {
-    "Keyword": "MagicCloak",
-    "reserveMultiplier": 50
+    "Keyword": "MagicCloak"
   },
   "__formData|Skyrim.esm|0x51b16": {
-    "Keyword": "MagicArmorSpell",
-    "reserveMultiplier": 50
+    "Keyword": "MagicArmorSpell"
   },
   "__formData|Skyrim.esm|0x5ad5c": {
-    "Keyword": "MagicArmorSpell",
-    "reserveMultiplier": 50
+    "Keyword": "MagicArmorSpell"
   },
   "__formData|Skyrim.esm|0x5ad5d": {
-    "Keyword": "MagicArmorSpell",
-    "reserveMultiplier": 50
+    "Keyword": "MagicArmorSpell"
   },
   "__formData|Skyrim.esm|0x5ad5e": {
-    "Keyword": "MagicArmorSpell",
-    "reserveMultiplier": 50
+    "Keyword": "MagicArmorSpell"
   },
   "__formData|Skyrim.esm|0xcdb70": {
-    "Keyword": "MagicArmorSpell",
-    "reserveMultiplier": 50
+    "Keyword": "MagicArmorSpell"
   },
   "__formData|Skyrim.esm|0x211eb": {
-    "Keyword": "Bound",
-    "reserveMultiplier": 50
+    "Keyword": "Bound"
   },
   "__formData|Skyrim.esm|0x211ed": {
-    "Keyword": "Bound",
-    "reserveMultiplier": 50
+    "Keyword": "Bound"
   },
   "__formData|Skyrim.esm|0x211ec": {
-    "Keyword": "Bound",
-    "reserveMultiplier": 50
+    "Keyword": "Bound"
   },
   "__formData|Dragonborn.esm|0x1ce06": {
-    "Keyword": "Bound",
-    "reserveMultiplier": 50
+    "Keyword": "Bound"
   },
   "__formData|Skyrim.esm|0x640b6": {
-    "Keyword": "Summon",
-    "reserveMultiplier": 50
+    "Keyword": "Summon"
   },
   "__formData|Skyrim.esm|0x204C3": {
-      "Keyword": "Summon",
-      "reserveMultiplier": 50
+      "Keyword": "Summon"
   },
   "__formData|Skyrim.esm|0x204C4": {
-      "Keyword": "Summon",
-      "reserveMultiplier": 50
+      "Keyword": "Summon"
   },
   "__formData|Skyrim.esm|0x204C5": {
-      "Keyword": "Summon",
-      "reserveMultiplier": 50
+      "Keyword": "Summon"
   },
   "__formData|Skyrim.esm|0x10ddec": {
-      "Keyword": "Summon",
-      "reserveMultiplier": 50
+      "Keyword": "Summon"
   }
 }

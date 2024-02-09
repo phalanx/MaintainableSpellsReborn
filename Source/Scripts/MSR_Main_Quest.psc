@@ -40,6 +40,7 @@ string userConfiguredSpellsKey = ".MSR.userConfiguredSpells" ; JArray
 ; float backlashDuration
 ; float backlashMagickaRateMultMag
 ; float backlashMagickaMag
+; float reserveMultiplier
 string configKey = ".MSR.Config."
 
 int jSpellKeywordMap
@@ -87,6 +88,7 @@ Event OnInit()
     JDB.solveIntSetter(configKey + "perSpellThreshold", 3, true)
     JDB.solveIntSetter(configKey + "perSpellDebuffType", 0, true)
     JDB.solveFltSetter(configKey + "dualCastMultiplier", 2.8, true)
+    JDB.solveFltSetter(configKey + "reserveMultiplier", 50, true)
 
     JDB.solveIntSetter(configKey + "backlashType", 3, true)
     JDB.solveIntSetter(configKey + "backlashDuration", 30, true)
@@ -147,6 +149,17 @@ Function Uninstall()
     JDB.setObj(".MSR", 0)
     JValue.releaseObjectsWithTag(retainTag)
     Log("Uninstall Finished")
+EndFunction
+
+Function UpdateDefaultReservationMultiplier(float newVal)
+    Spell currentSpell = JFormMap.nextKey(jSupportedSpells) as Spell
+    int currentSpellData = JMap.object()
+    while currentSpell != None
+        currentSpellData = JFormMap.GetObj(jSupportedSpells, currentSpell)
+        JMap.setFlt(currentSpellData, "reserveMultiplier", newVal)
+        JFormMap.setObj(jSupportedSpells, currentSpell, currentSpellData)
+        currentSpell = JFormMap.nextKey(jSupportedSpells, currentSpell) as Spell
+    endwhile
 EndFunction
 
 Function UpdateSpell(Spell akSpell, bool blacklisted)
@@ -300,7 +313,10 @@ Function __ToggleSpellOn(Spell akSpell, bool wasDualCast)
     endif
     Log("Toggle on spell Cost: " + spellCost)
     int spellData = JFormMap.getObj(JDB.solveObj(supportedSpellsKey), akSpell)
-    int reserveMultiplier = JMap.getInt(spellData, "reserveMultiplier")
+    int reserveMultiplier = JMap.getInt(spellData, "reserveMultiplier", -1)
+    if reserveMultiplier == -1
+        reserveMultiplier = JDB.solveInt(configKey + "reserveMultiplier", 50)
+    endif
     bool blacklisted = JMap.getInt(spellData, "isBlacklisted") as bool
     Log("Reserve Multiplier: " + reserveMultiplier)
 
@@ -378,7 +394,10 @@ Function __ToggleSpellOff(Spell akSpell)
     endif
     int spellData = JFormMap.getObj(jMaintainedSpells, akSpell)
     float spellCost = JMap.getFlt(spellData, "spellCost")
-    int reserveMultiplier = JMap.getInt(spellData, "reserveMultiplier")
+    int reserveMultiplier = JMap.getInt(spellData, "reserveMultiplier", -1)
+    if reserveMultiplier == -1
+        reserveMultiplier = JDB.solveInt(configKey + "reserveMultiplier", 50)
+    endif
     string spellKeyword = JMap.getStr(spellData, "Keyword")
     Log("Toggle Off Spell Cost: " + spellCost)
     Log("Toggle Off Spell Keyword: " + spellKeyword)
