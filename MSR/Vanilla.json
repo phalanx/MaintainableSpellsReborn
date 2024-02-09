@@ -61,5 +61,23 @@
   },
   "__formData|Skyrim.esm|0x10ddec": {
       "Keyword": "Summon"
+  },
+  "__formData|Dawnguard.esm|0x45b3": {
+    "Keyword": "Summon"
+  },
+  "__formData|Dawnguard.esm|0x45b8": {
+    "Keyword": "Summon"
+  },
+  "__formData|Dawnguard.esm|0x45ba": {
+    "Keyword": "Summon"
+  },
+  "__formData|Dragonborn.esm|0x17782": {
+    "Keyword": "Summon"
+  },
+  "__formData|Dragonborn.esm|0x1cdf6": {
+    "Keyword": "Summon"
+  },
+  "__formData|Dragonborn.esm|0x33c66": {
+    "Keyword": "Summon"
   }
 }

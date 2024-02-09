@@ -1,0 +1,161 @@
+{
+  "__metaInfo": {
+    "typeName": "JFormMap"
+  },
+  "__formData|MysticismMagic.esp|0x1f2fa": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x1f2fb": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x10d264": {
+    "Keyword": "MagicFortifySpeed"
+  },
+  "__formData|MysticismMagic.esp|0x10d265": {
+    "Keyword": "MagicFortifySpeed"
+  },
+  "__formData|MysticismMagic.esp|0x1b3907": {
+    "Keyword": "Generic"
+  },
+  "__formData|MysticismMagic.esp|0x209a73": {
+    "Keyword": "MagicCloak"
+  },
+  "__formData|MysticismMagic.esp|0x2559de": {
+    "Keyword": "MagicRegenSpell"
+  },
+  "__formData|MysticismMagic.esp|0x2559df": {
+    "Keyword": "MagicRegenSpell"
+  },
+  "__formData|MysticismMagic.esp|0x274020": {
+    "Keyword": "MagicAttunementSpell"
+  },
+  "__formData|MysticismMagic.esp|0x274025": {
+    "Keyword": "MagicAttunementSpell"
+  },
+  "__formData|MysticismMagic.esp|0x29265d": {
+    "Keyword": "MagicShieldSpell"
+  },
+  "__formData|MysticismMagic.esp|0x29265e": {
+    "Keyword": "MagicShieldSpell"
+  },
+  "__formData|MysticismMagic.esp|0x292664": {
+    "Keyword": "MagicShieldSpell"
+  },
+  "__formData|MysticismMagic.esp|0x292665": {
+    "Keyword": "MagicShieldSpell"
+  },
+  "__formData|MysticismMagic.esp|0x29266b": {
+    "Keyword": "MagicShieldSpell"
+  },
+  "__formData|MysticismMagic.esp|0x29266c": {
+    "Keyword": "MagicShieldSpell"
+  },
+  "__formData|MysticismMagic.esp|0x292672": {
+    "Keyword": "MagicShieldSpell"
+  },
+  "__formData|MysticismMagic.esp|0x292673": {
+    "Keyword": "Generic"
+  },
+  "__formData|MysticismMagic.esp|0x292684": {
+    "Keyword": "MagicWeightSpell"
+  },
+  "__formData|MysticismMagic.esp|0x292689": {
+    "Keyword": "MagicWeightSpell"
+  },
+  "__formData|MysticismMagic.esp|0x2977a1": {
+    "Keyword": "MagicSlowFall"
+  },
+  "__formData|MysticismMagic.esp|0x2ca222": {
+    "Keyword": "Generic"
+  },
+  "__formData|MysticismMagic.esp|0x2ca226": {
+    "Keyword": "Generic"
+  },
+  "__formData|MysticismMagic.esp|0x2cf331": {
+    "Keyword": "Generic"
+  },
+  "__formData|MysticismMagic.esp|0x40933c": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x413541": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x413545": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x413549": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x41864c": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x41d74f": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x42795a": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x43bd62": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x43bd66": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x43bd6c": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x43bd6d": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x43bd72": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x43bd7a": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x43bd82": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x43bd87": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x45538c": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x45f595": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0x7d0721": {
+    "Keyword": "Generic"
+  },
+  "__formData|MysticismMagic.esp|0x9a74c9": {
+    "Keyword": "MagicRegenSpell"
+  },
+  "__formData|MysticismMagic.esp|0x9a74cb": {
+    "Keyword": "MagicRegenSpell"
+  },
+  "__formData|MysticismMagic.esp|0xdc99e1": {
+    "Keyword": "bound"
+  },
+  "__formData|MysticismMagic.esp|0xdd3bed": {
+    "Keyword": "bound"
+  },
+  "__formData|MysticismMagic.esp|0xded0f7": {
+    "Keyword": "bound"
+  },
+  "__formData|MysticismMagic.esp|0xe01500": {
+    "Keyword": "bound"
+  },
+  "__formData|MysticismMagic.esp|0xe7fec6": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0xe7fecb": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0xe7fed0": {
+    "Keyword": "Summon"
+  },
+  "__formData|MysticismMagic.esp|0xe7fed5": {
+    "Keyword": "Summon"
+  }
+}
