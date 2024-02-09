@@ -44,6 +44,44 @@ event OnPageDraw()
     AddToggleOptionST("Toggle___debugLogging", "$MSR_debugLogging", JDB.solveInt(".MSR.Config.debugLogging") as bool)
 endevent
 
+Event OnConfigClose()
+    MSR_Main.SaveMainMCMConfig()
+endEvent
+
+; int Function SaveData()
+;     MSR_Main.Log("Saving MCM Data")
+;     int data = JMap.object()
+;     JMap.setInt(data, "debugLogging", JDB.solveInt(configKey + "debugLogging", 1))
+;     JMap.setFlt(data, "perSpellDebuffAmount", JDB.solveFlt(configKey + "perSpellDebuffAmount", 3) )
+;     JMap.setInt(data, "perSpellThreshold", JDB.solveInt(configKey + "perSpellThreshold", 3))
+;     JMap.setInt(data, "perSpelLDebuffType", JDB.solveInt(configKey + "perSpellDebuffType", 0))
+;     JMap.setFlt(data, "dualCastMultiplier", JDB.solveFlt(configKey + "dualCastMultiplier", 2.8))
+;     JMap.setFlt(data, "reserveMultiplier", JDB.solveFlt(configKey + "reserveMultiplier", 50))
+
+;     JMap.setInt(data, "backlashType", JDB.solveInt(configKey + "backlashType", 3))
+;     JMap.setInt(data, "backlashDuration", JDB.solveInt(configKey + "backlashDuration", 30))
+;     JMap.setFlt(data, "backlashMagickaRateMult", JDB.solveFlt(configKey + "backlashMagickaRateMult", 30))
+;     JMap.setFlt(data, "backlashMagicka", JDB.solveFlt(configKey + "backlashMagicka", 30))
+
+    
+;     return data
+; EndFunction
+
+; Function LoadData(int jObj)
+;     MSR_Main.Log("Loading MCM Data")
+;     JDB.solveIntSetter(configKey + "debugLogging", JMap.getInt(jObj, "debugLogging", 1), true)
+;     JDB.solveFltSetter(configKey + "perSpellDebuffAmount", JMap.getFlt(jObj, "perSpellDebuffAmount", 3.0), true)
+;     JDB.solveIntSetter(configKey + "perSpellThreshold", JMap.getInt(jObj, "perSpellthreshold", 3), true)
+;     JDB.solveIntSetter(configKey + "perSpellDebuffType", JMap.getInt(jObj, "perSpellDebuffType", 0), true)
+;     JDB.solveFltSetter(configKey + "dualCastMultiplier", JMap.getFlt(jObj, "dualCastMultiplier", 2.8), true)
+;     JDB.solveFltSetter(configKey + "reserveMultiplier", JMap.getFlt(jObj, "reserveMultiplier", 50.0), true)
+
+;     JDB.solveIntSetter(configKey + "backlashType", JMap.getInt(jObj, "backlashType", 3), true)
+;     JDB.solveIntSetter(configKey + "backlashDuration", JMap.getInt(jObj, "backlashDuration", 30), true)
+;     JDB.solveFltSetter(configKey + "backlashMagickaRateMult", JMap.getFlt(jObj, "backlashMagickaRateMult", 30.0), true)
+;     JDB.solveFltSetter(configKey + "backlashMagicka", JMap.getFlt(jObj, "backlashMagicka", 30.0), true)
+; EndFunction
+
 State Menu_perSpellDebuffType
     Event OnMenuOpenST(string state_id)
         SetMenuDialog(perSpellDebuffTypeStrings, JDB.solveInt(configKey + "perSpellDebuffType"), 0)

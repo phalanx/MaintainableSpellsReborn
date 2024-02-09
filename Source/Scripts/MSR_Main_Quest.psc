@@ -82,22 +82,17 @@ EndFunction
 Event OnInit()
     ValidateJContainers()
     userDir = JContainers.userDirectory() + "MSR/"
-
+    
     JDB.solveIntSetter(configKey + "debugLogging", 1, true)
     JDB.solveFltSetter(configKey + "perSpellDebuffAmount", 1.0, true)
     JDB.solveIntSetter(configKey + "perSpellThreshold", 3, true)
     JDB.solveIntSetter(configKey + "perSpellDebuffType", 0, true)
     JDB.solveFltSetter(configKey + "dualCastMultiplier", 2.8, true)
     JDB.solveFltSetter(configKey + "reserveMultiplier", 50, true)
-
     JDB.solveIntSetter(configKey + "backlashType", 3, true)
     JDB.solveIntSetter(configKey + "backlashDuration", 30, true)
     JDB.solveFltSetter(configKey + "backlashMagickaRateMult", 30, true)
     JDB.solveFltSetter(configKey + "backlashMagicka", 30, true)
-
-    JDB.solveObjSetter(supportedSpellsKey, JFormMap.object(), true)
-    JDB.solveObjSetter(maintainedSpellsKey, JFormMap.object(), true)
-    JDB.solveObjSetter(userConfiguredSpellsKey, JArray.object(), true)
         
     jSpellKeywordMap = JMap.object()
     JValue.retain(jSpellKeywordMap, retainTag)
@@ -112,6 +107,7 @@ Function Maintenance()
     jSupportedSpells = JDB.solveObj(supportedSpellsKey)
     jMaintainedSpells = JDB.solveObj(maintainedSpellsKey)
 
+    LoadMainMCMConfig()
     ReadDefaultSpells()
     ReadUserConfiguration()
 
@@ -210,9 +206,11 @@ int Function ReadConfigDirectory(string dirPath)
 	endif
     string currentFile = JMap.nextKey(jDir)
     while currentFile != ""
-        Log("Reading File: " + currentFile)
-        int jFileData = JMap.getObj(jDir, currentFile)
-        JFormMap.addPairs(jNewSpells, jFileData, true)
+        if currentFile != "MCM_Config.json"
+            Log("Reading File: " + currentFile)
+            int jFileData = JMap.getObj(jDir, currentFile)
+            JFormMap.addPairs(jNewSpells, jFileData, true)
+        endif
         currentFile = JMap.nextKey(jDir, currentFile)
     endwhile
     SpellConsistencyCheck(jNewSpells)
@@ -236,12 +234,53 @@ Function ReadUserConfiguration()
     JValue.release(jNewSpells)
 EndFunction
 
+Function SaveMainMCMConfig()
+    Log("Saving MCM Data")
+    int data = JMap.object()
+
+    JMap.setInt(data, "debugLogging", JDB.solveInt(configKey + "debugLogging", 1))
+    JMap.setFlt(data, "perSpellDebuffAmount", JDB.solveFlt(configKey + "perSpellDebuffAmount", 3) )
+    JMap.setInt(data, "perSpellThreshold", JDB.solveInt(configKey + "perSpellThreshold", 3))
+    JMap.setInt(data, "perSpelLDebuffType", JDB.solveInt(configKey + "perSpellDebuffType", 0))
+    JMap.setFlt(data, "dualCastMultiplier", JDB.solveFlt(configKey + "dualCastMultiplier", 2.8))
+    JMap.setFlt(data, "reserveMultiplier", JDB.solveFlt(configKey + "reserveMultiplier", 50))
+
+    JMap.setInt(data, "backlashType", JDB.solveInt(configKey + "backlashType", 3))
+    JMap.setInt(data, "backlashDuration", JDB.solveInt(configKey + "backlashDuration", 30))
+    JMap.setFlt(data, "backlashMagickaRateMult", JDB.solveFlt(configKey + "backlashMagickaRateMult", 30))
+    JMap.setFlt(data, "backlashMagicka", JDB.solveFlt(configKey + "backlashMagicka", 30))
+
+    JValue.writeToFile(data, userDir + "MCM_Config.json")
+EndFunction
+
+Function LoadMainMCMConfig()
+    Log("Loading MCM Data")
+    int jObj
+    if JContainers.fileExistsAtPath(userDir + "MCM_Config.json")
+		jObj = JValue.readFromFile(userDir + "MCM_Config.json")
+    else
+        Log("No MCM file found")
+        return
+    endif
+    JDB.solveIntSetter(configKey + "debugLogging", JMap.getInt(jObj, "debugLogging", 1), true)
+    JDB.solveFltSetter(configKey + "perSpellDebuffAmount", JMap.getFlt(jObj, "perSpellDebuffAmount", 3.0), true)
+    JDB.solveIntSetter(configKey + "perSpellThreshold", JMap.getInt(jObj, "perSpellthreshold", 3), true)
+    JDB.solveIntSetter(configKey + "perSpellDebuffType", JMap.getInt(jObj, "perSpellDebuffType", 0), true)
+    JDB.solveFltSetter(configKey + "dualCastMultiplier", JMap.getFlt(jObj, "dualCastMultiplier", 2.8), true)
+    JDB.solveFltSetter(configKey + "reserveMultiplier", JMap.getFlt(jObj, "reserveMultiplier", 50.0), true)
+
+    JDB.solveIntSetter(configKey + "backlashType", JMap.getInt(jObj, "backlashType", 3), true)
+    JDB.solveIntSetter(configKey + "backlashDuration", JMap.getInt(jObj, "backlashDuration", 30), true)
+    JDB.solveFltSetter(configKey + "backlashMagickaRateMult", JMap.getFlt(jObj, "backlashMagickaRateMult", 30.0), true)
+    JDB.solveFltSetter(configKey + "backlashMagicka", JMap.getFlt(jObj, "backlashMagicka", 30.0), true)
+EndFunction
+
 Function SaveSupportedSpells()
-    Log("Saving")
+    Log("Saving Supported Spells")
     int jUserConfiguredSpells = JDB.solveObj(userConfiguredSpellsKey)
     
     if JFormMap.count(jUserConfiguredSpells) != 0    
-        JValue.writeToFile(jUserConfiguredSpells, userDir + "UserConfiguration.json")
+        JValue.writeToFile(jUserConfiguredSpells, userDir + "Spell_Config.json")
         Log("Done saving")
     Else
         Log("Nothing to save")
