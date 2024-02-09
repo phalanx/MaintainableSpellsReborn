@@ -36,6 +36,7 @@ event OnConfigClose()
     JValue.release(supportedSpellsLookup)
     JValue.release(userConfiguredSpells)
     MSR_Main.SaveSupportedSpells()
+    currentSpellsPage = 0
 EndEvent
 
 Function PaginateSpells(int startingPage = 0)
@@ -48,31 +49,41 @@ Function PaginateSpells(int startingPage = 0)
     int sortedKeys = JArray.sort(JMap.allKeys(supportedSpellsLookup))
     int cursorPosition = 4
     MSR_Main.Log(JArray.asStringArray(sortedKeys))
-    int i = (startingPage * 30)
-    while i < JArray.count(sortedKeys) && cursorPosition < 120
+    int i = (startingPage * 22)
+    while i < JArray.count(sortedKeys) && cursorPosition < 110
         Form currentSpell = JMap.GetForm(supportedSpellsLookup, JArray.getStr(sortedKeys, i))
         AddSpellBlock(currentSpell as Spell)
+        
         if (cursorPosition % 2) == 0
             cursorPosition +=1
+            SetCursorPosition(cursorPosition)
         else
             cursorPosition += 9
+            SetCursorPosition(cursorPosition)
         endif
-        SetCursorPosition(cursorPosition)
         i += 1
     endwhile
-    if cursorPosition >= 124
-        SetCursorFillMode(LEFT_TO_RIGHT)
-        AddHeaderOption("")
-        AddHeaderOption("")
-        if currentSpellsPage != 0
-            AddTextOptionST("Paginate___Previous", "$MSR_PREVIOUSPAGE", None)
-        else
-            AddEmptyOption()
-        endif
+
+    if (cursorPosition % 2) != 0
+        SetCursorPosition(cursorPosition + 9)
+    endif
+    
+    SetCursorFillMode(LEFT_TO_RIGHT)
+    AddHeaderOption("")
+    AddHeaderOption("")
+
+    if currentSpellsPage != 0
+        AddTextOptionST("Paginate___Previous", "$MSR_PREVIOUSPAGE", None)
+    else
+        AddEmptyOption()
+    endif
+    if cursorPosition >= 110
         if i < JArray.count(sortedKeys)
             AddTextOptionST("Paginate___Next", "$MSR_NEXTPAGE", None)
         endif
     endif
+    SetCursorFillMode(TOP_TO_BOTTOM)
+
 EndFunction
 
 Function AddSpellBlock(Spell akSpell)
