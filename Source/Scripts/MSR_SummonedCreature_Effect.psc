@@ -27,7 +27,7 @@ Event OnActorKilled(Actor akVictim, Actor akKiller)
     
     if commandedActors.Length > 0 && commandedActors.Find(akVictim) != -1
         Log("Commanded actor killed")
-         MSR_Main.RemoveConjuration("Summon")
+        MSR_Main.RemoveConjuration("Summon")
         commandedActors = GetCommandedActors(playerRef)
     endif
 

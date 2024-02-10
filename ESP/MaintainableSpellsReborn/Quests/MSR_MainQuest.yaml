@@ -38,7 +38,7 @@ VirtualMachineAdapter:
       Object: 00080A:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
       Name: blackListedKeyword
-      Object: 005916:MaintainableSpellsReborn.esp
+      Object: 000815:MaintainableSpellsReborn.esp
   FileName: ''
   Aliases:
   - Property:

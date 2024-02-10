@@ -82,6 +82,10 @@ EndFunction
 Event OnInit()
     ValidateJContainers()
     userDir = JContainers.userDirectory() + "MSR/"
+
+    JDB.solveObjSetter(supportedSpellsKey, JFormMap.object(), true)
+    JDB.solveObjSetter(maintainedSpellsKey, JFormMap.object(), true)
+    JDB.solveObjSetter(userConfiguredSpellsKey, JArray.object(), true)
     
     JDB.solveIntSetter(configKey + "debugLogging", 1, true)
     JDB.solveFltSetter(configKey + "perSpellDebuffAmount", 1.0, true)
@@ -104,8 +108,8 @@ Function Maintenance()
     ValidateJContainers()
 
     playerRef.AddPerk(spellManipulationPerk)
-    jSupportedSpells = JDB.solveObj(supportedSpellsKey)
-    jMaintainedSpells = JDB.solveObj(maintainedSpellsKey)
+    jSupportedSpells = JDB.solveObj(supportedSpellsKey, JFormMap.object())
+    jMaintainedSpells = JDB.solveObj(maintainedSpellsKey, JFormMap.object())
 
     LoadMainMCMConfig()
     ReadDefaultSpells()
@@ -356,7 +360,7 @@ Function __ToggleSpellOn(Spell akSpell, bool wasDualCast)
     if reserveMultiplier == -1
         reserveMultiplier = JDB.solveInt(configKey + "reserveMultiplier", 50)
     endif
-    bool blacklisted = JMap.getInt(spellData, "isBlacklisted") as bool
+    bool blacklisted = JMap.getInt(spellData, "isBlacklisted", 0) as bool
     Log("Reserve Multiplier: " + reserveMultiplier)
 
     if blacklisted

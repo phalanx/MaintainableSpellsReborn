@@ -4,9 +4,11 @@ SpriggitSource:
 ModKey: MaintainableSpellsReborn.esp
 GameRelease: SkyrimSE
 ModHeader:
+  Flags:
+  - Light
   Stats:
     NumRecords: 28
-    NextFormID: 22807
+    NextFormID: 2070
   Author: DEFAULT
   MasterReferences:
   - Master: Skyrim.esm
