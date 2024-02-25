@@ -42,6 +42,7 @@ event OnPageDraw()
     SetCursorPosition(1)
     AddHeaderOption(FONT_PRIMARY("$MSR_DEBUGHEADER"))
     AddToggleOptionST("Toggle___debugLogging", "$MSR_debugLogging", JDB.solveInt(".MSR.Config.debugLogging") as bool)
+    AddToggleOptionST("Toggle_jContainersCheck", "$MSR_jContainersCheck", MSR_Main.jContainersCheck)
     AddHeaderOption(FONT_PRIMARY("$MSR_XPHEADER"))
     AddSliderOptionST("Slider_xpGainDelay", "$MSR_XPDELAY", JDB.solveFlt(".MSR.Config.xpGainDelay"), "{1}")
     AddSliderOptionST("Slider_xpMultiplier", "$MSR_XPMULTIPLIER", JDB.solveFlt(".MSR.Config.xpMultiplier"), "{1}")
@@ -130,6 +131,17 @@ State Toggle
         SetInfoText("$MSR_" + state_id + "_HELP")
     EndEvent
 EndState
+
+State Toggle_jContainersCheck
+    Event OnSelectST(string state_id)
+        MSR_Main.jContainersCheck = !MSR_Main.jContainersCheck
+        SetToggleOptionValueST(MSR_Main.jContainersCheck)
+    EndEvent
+    Event OnHighlightST(string state_id)
+        SetInfoText("$MSR_jContainersCheck_HELP")
+    EndEvent
+EndState
+
 
 State Menu_BacklashType
     Event OnMenuOpenST(string state_id)

@@ -6,6 +6,7 @@ import PO3_Events_AME
 int expectedJContainersAPIVersion = 4
 int expectedJContainersFeatureVersion = 2
 
+bool Property jContainersCheck = true Auto Hidden
 string Property MSR_ERROR_JCONTAINERSMISSING = "JContainers appears to be missing. Proceed with Caution" Auto Hidden
 string Property MSR_ERROR_JCONTAINERSAPIHIGH = "JContainers API Version is higher than expected. Notify the author of Maintainable Spells Reborn and proceed with caution" Auto Hidden
 string Property MSR_ERROR_JCONTAINERSAPILOW = "JContainers API Version is lower than expected. Upgrade JContainers or proceed with caution" Auto Hidden
@@ -75,7 +76,9 @@ bool Function ValidateJContainers()
 
     if !returnCode
         Log("MSR ERR: " + errorMessage)
-        Debug.MessageBox("MSR Err:\n" + errorMessage)
+        if jContainersCheck
+            Debug.MessageBox("MSR Err:\n" + errorMessage)
+        endif
     endif
     return returnCode
 EndFunction
@@ -244,6 +247,7 @@ Function SaveMainMCMConfig()
     int data = JMap.object()
 
     JMap.setInt(data, "debugLogging", JDB.solveInt(configKey + "debugLogging", 1))
+    JMap.setInt(data, "jContainersCheck", jContainersCheck as int)
     JMap.setFlt(data, "perSpellDebuffAmount", JDB.solveFlt(configKey + "perSpellDebuffAmount", 3) )
     JMap.setInt(data, "perSpellThreshold", JDB.solveInt(configKey + "perSpellThreshold", 3))
     JMap.setInt(data, "perSpelLDebuffType", JDB.solveInt(configKey + "perSpellDebuffType", 0))
@@ -271,6 +275,7 @@ Function LoadMainMCMConfig()
         return
     endif
     JDB.solveIntSetter(configKey + "debugLogging", JMap.getInt(jObj, "debugLogging", 1), true)
+    jContainersCheck = JMap.getInt(jObj, "jContainersCheck", 1) as bool
     JDB.solveFltSetter(configKey + "perSpellDebuffAmount", JMap.getFlt(jObj, "perSpellDebuffAmount", 3.0), true)
     JDB.solveIntSetter(configKey + "perSpellThreshold", JMap.getInt(jObj, "perSpellthreshold", 3), true)
     JDB.solveIntSetter(configKey + "perSpellDebuffType", JMap.getInt(jObj, "perSpellDebuffType", 0), true)
