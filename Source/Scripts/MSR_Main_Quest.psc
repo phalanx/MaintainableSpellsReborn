@@ -30,6 +30,7 @@ string retainTag = "MaintainableSpellsReborn"
 string supportedSpellsKey = ".MSR.supportedSpells"  ; JFormMap
 string maintainedSpellsKey = ".MSR.maintainedSpells" ; JFormMap
 string userConfiguredSpellsKey = ".MSR.userConfiguredSpells" ; JArray
+string lastXPGainTimeKey = ".MSR.lastXPGain" ; Float
 
 ; Available Configs
 ; bool debugLogging Whether logs should be written to file
@@ -254,6 +255,9 @@ Function SaveMainMCMConfig()
     JMap.setFlt(data, "backlashMagickaRateMult", JDB.solveFlt(configKey + "backlashMagickaRateMult", 30))
     JMap.setFlt(data, "backlashMagicka", JDB.solveFlt(configKey + "backlashMagicka", 30))
 
+    JMap.setFlt(data, "xpGainDelay", JDB.solveFlt(configKey + "xpGainDelay", 1.0))
+    JMap.setFlt(data, "xpMultiplier", JDB.solveFlt(configKey + "xpMultiplier", 1.0))
+
     JValue.writeToFile(data, userDir + "MCM_Config.json")
 EndFunction
 
@@ -277,6 +281,9 @@ Function LoadMainMCMConfig()
     JDB.solveIntSetter(configKey + "backlashDuration", JMap.getInt(jObj, "backlashDuration", 30), true)
     JDB.solveFltSetter(configKey + "backlashMagickaRateMult", JMap.getFlt(jObj, "backlashMagickaRateMult", 30.0), true)
     JDB.solveFltSetter(configKey + "backlashMagicka", JMap.getFlt(jObj, "backlashMagicka", 30.0), true)
+
+    JDB.solveFltSetter(configKey + "xpGainDelay", JMap.getFLt(jObj, "xpGainDelay", 1.0), true)
+    JDB.solveFltSetter(configKey + "xpMultiplier", JMap.getFlt(jObj, "xpMultiplier", 1.0), true)
 EndFunction
 
 Function SaveSupportedSpells()

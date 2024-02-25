@@ -1,18 +1,18 @@
-FormKey: 00080F:MaintainableSpellsReborn.esp
-EditorID: MSR_SummonCreature_Effect
+FormKey: 005917:MaintainableSpellsReborn.esp
+EditorID: MSR_CombatXP
 VirtualMachineAdapter:
   Scripts:
-  - Name: MSR_SummonedCreature_Effect
+  - Name: MSR_XP_Effect
     Properties:
     - MutagenObjectType: ScriptObjectProperty
       Name: MSR_Main
       Object: 000D62:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: PlayerRef
-      Object: 000014:Skyrim.esm
+      Name: GameDaysPassed
+      Object: 000039:Skyrim.esm
 Name:
   TargetLanguage: English
-  Value: Summoned Creature
+  Value: Combat XP
 Flags:
 - HideInUI
 Archetype:
@@ -24,3 +24,9 @@ Sounds: []
 Description:
   TargetLanguage: English
   Value: ''
+Conditions:
+- MutagenObjectType: ConditionFloat
+  Unknown1: 0x000000
+  Data:
+    MutagenObjectType: IsInCombatConditionData
+  ComparisonValue: 1

@@ -1,0 +1,17 @@
+FormKey: 000805:MaintainableSpellsReborn.esp
+EditorID: MSR_MagickaRateDebuff
+Name:
+  TargetLanguage: English
+  Value: Mental Load
+Flags:
+- Recover
+- Detrimental
+Archetype:
+  MutagenObjectType: MagicEffectArchetype
+  ActorValue: MagickaRateMult
+DualCastScale: 1
+CastingSoundLevel: Normal
+Sounds: []
+Description:
+  TargetLanguage: English
+  Value: Maintaining spells taxes your mind and reduces your Magicka Regen by <mag>%

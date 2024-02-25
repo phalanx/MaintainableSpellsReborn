@@ -42,6 +42,9 @@ event OnPageDraw()
     SetCursorPosition(1)
     AddHeaderOption(FONT_PRIMARY("$MSR_DEBUGHEADER"))
     AddToggleOptionST("Toggle___debugLogging", "$MSR_debugLogging", JDB.solveInt(".MSR.Config.debugLogging") as bool)
+    AddHeaderOption(FONT_PRIMARY("$MSR_XPHEADER"))
+    AddSliderOptionST("Slider_xpGainDelay", "$MSR_XPDELAY", JDB.solveFlt(".MSR.Config.xpGainDelay"), "{1}")
+    AddSliderOptionST("Slider_xpMultiplier", "$MSR_XPMULTIPLIER", JDB.solveFlt(".MSR.Config.xpMultiplier"), "{1}")
 endevent
 
 Event OnConfigClose()
@@ -166,5 +169,31 @@ State Slider_Backlash_Duration
     EndEvent
     Event OnHighlightST(string state_id)
         SetInfoText("$MSR_backlashDuration_HELP")
+    EndEvent
+EndState
+
+State Slider_xpGainDelay
+    Event OnSliderOpenST(string state_id)
+        SetSliderDialog(JDB.solveFlt(configKey + "xpGainDelay"), 0, 10, 0.1, 1.0)
+    EndEvent
+    Event OnSliderAcceptST(string state_id, float value)
+        JDB.solveFltSetter(configKey + "xpGainDelay", value, true)
+        SetSliderOptionValueST(value, "{1}")
+    EndEvent
+    Event OnHighlightST(string state_id)
+        SetInfoText("$MSR_XPDELAY_HELP")
+    EndEvent
+EndState
+
+State Slider_xpMultiplier
+    Event OnSliderOpenST(string state_id)
+        SetSliderDialog(JDB.solveFlt(configKey + "xpMultiplier"), 0, 10, 0.1, 1.0)
+    EndEvent
+    Event OnSliderAcceptST(string state_id, float value)
+        JDB.solveFltSetter(configKey + "xpMultiplier", value, true)
+        SetSliderOptionValueST(value, "{1}")
+    EndEvent
+    Event OnHighlightST(string state_id)
+        SetInfoText("$MSR_XPMULTIPLIER_HELP")
     EndEvent
 EndState

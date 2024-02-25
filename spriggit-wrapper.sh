@@ -2,6 +2,7 @@
 
 function serialize(){
     spriggit serialize -i ./MaintainableSpellsReborn.esp -o ./ESP/MaintainableSpellsReborn -g SkyrimSE --PackageName Spriggit.Yaml &
+
 }
 
 function deserialize(){
@@ -15,3 +16,5 @@ elif [[ "$1" == "deserialize" ]]; then
 fi
 
 wait
+echo "Processing Finished..."
+read

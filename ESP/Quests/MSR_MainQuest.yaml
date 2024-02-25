@@ -4,9 +4,6 @@ VirtualMachineAdapter:
   Scripts:
   - Name: MSR_Main_Quest
     Properties:
-    - MutagenObjectType: ScriptObjectProperty
-      Name: PlayerRef
-      Object: 000014:Skyrim.esm
     - MutagenObjectType: ScriptObjectListProperty
       Name: mentalLoadDebuffs
       Objects:
@@ -15,23 +12,23 @@ VirtualMachineAdapter:
       - Name: ''
         Object: 000807:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: boundWeaponEffect
-      Object: 00080E:MaintainableSpellsReborn.esp
+      Name: blackListedKeyword
+      Object: 000815:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
       Name: freeToggleOffKeyword
       Object: 00080A:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: magickaDebuffSpell
-      Object: 000801:MaintainableSpellsReborn.esp
+      Name: boundWeaponEffect
+      Object: 00080E:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
       Name: toggleableKeyword
       Object: 00080D:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
+      Name: PlayerRef
+      Object: 000014:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: spellManipulationPerk
       Object: 000809:MaintainableSpellsReborn.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: blackListedKeyword
-      Object: 000815:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectListProperty
       Name: backlashDebuffs
       Objects:
@@ -39,6 +36,9 @@ VirtualMachineAdapter:
         Object: 000811:MaintainableSpellsReborn.esp
       - Name: ''
         Object: 000814:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: magickaDebuffSpell
+      Object: 000801:MaintainableSpellsReborn.esp
   FileName: ''
   Aliases:
   - Property:
@@ -69,5 +69,5 @@ Aliases:
   - 000802:MaintainableSpellsReborn.esp
   - 00080C:MaintainableSpellsReborn.esp
   - 000810:MaintainableSpellsReborn.esp
-  - 000817:MaintainableSpellsReborn.esp
+  - 005918:MaintainableSpellsReborn.esp
   VoiceTypes: Null

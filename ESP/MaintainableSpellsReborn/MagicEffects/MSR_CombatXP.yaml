@@ -1,25 +1,24 @@
-FormKey: 00080B:MaintainableSpellsReborn.esp
-EditorID: MSR_RemoveUtilitySpells
+FormKey: 000816:MaintainableSpellsReborn.esp
+EditorID: MSR_CombatXP
 VirtualMachineAdapter:
   Scripts:
-  - Name: MSR_Dispel_Effect
+  - Name: MSR_XP_Effect
     Properties:
     - MutagenObjectType: ScriptObjectProperty
       Name: MSR_Main
       Object: 000D62:MaintainableSpellsReborn.esp
-    - MutagenObjectType: ScriptBoolProperty
-      Name: utilityOnly
-      Data: True
+    - MutagenObjectType: ScriptObjectProperty
+      Name: GameDaysPassed
+      Object: 000039:Skyrim.esm
 Name:
   TargetLanguage: English
-  Value: Release Utility Spells
+  Value: Combat XP
 Archetype:
   MutagenObjectType: MagicEffectArchetype
   Type: Script
-CastType: FireAndForget
 DualCastScale: 1
 CastingSoundLevel: Normal
 Sounds: []
 Description:
   TargetLanguage: English
-  Value: Stop focusing on all of your utility spells to regain your magicka.
+  Value: ''

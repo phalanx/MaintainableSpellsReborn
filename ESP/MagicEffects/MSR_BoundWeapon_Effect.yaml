@@ -1,18 +1,17 @@
-FormKey: 00080B:MaintainableSpellsReborn.esp
-EditorID: MSR_RemoveUtilitySpells
+FormKey: 00080E:MaintainableSpellsReborn.esp
+EditorID: MSR_BoundWeapon_Effect
 VirtualMachineAdapter:
   Scripts:
-  - Name: MSR_Dispel_Effect
+  - Name: MSR_Conjuration_Effect
     Properties:
+    - MutagenObjectType: ScriptStringProperty
+      Name: keywordToDispel
+      Data: bound
     - MutagenObjectType: ScriptObjectProperty
       Name: MSR_Main
       Object: 000D62:MaintainableSpellsReborn.esp
-    - MutagenObjectType: ScriptBoolProperty
-      Name: utilityOnly
-      Data: True
-Name:
-  TargetLanguage: English
-  Value: Release Utility Spells
+Flags:
+- HideInUI
 Archetype:
   MutagenObjectType: MagicEffectArchetype
   Type: Script
@@ -22,4 +21,4 @@ CastingSoundLevel: Normal
 Sounds: []
 Description:
   TargetLanguage: English
-  Value: Stop focusing on all of your utility spells to regain your magicka.
+  Value: ''

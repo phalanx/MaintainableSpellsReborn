@@ -1,0 +1,23 @@
+FormKey: 000817:MaintainableSpellsReborn.esp
+EditorID: MSR_XP_Spell
+Name:
+  TargetLanguage: English
+  Value: MSR XP Spell
+EquipmentType: 013F44:Skyrim.esm
+Description:
+  TargetLanguage: English
+  Value: ''
+Flags:
+- IgnoreResistance
+- NoAbsorbOrReflect
+- NoDualCastModification
+Type: Ability
+Effects:
+- BaseEffect: 000816:MaintainableSpellsReborn.esp
+  Data: {}
+  Conditions:
+  - MutagenObjectType: ConditionFloat
+    Unknown1: 0x000000
+    Data:
+      MutagenObjectType: IsInCombatConditionData
+    ComparisonValue: 1

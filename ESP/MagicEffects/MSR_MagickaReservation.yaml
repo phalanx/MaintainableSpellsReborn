@@ -1,0 +1,17 @@
+FormKey: 000800:MaintainableSpellsReborn.esp
+EditorID: MSR_MagickaReservation
+Name:
+  TargetLanguage: English
+  Value: Reserved Magicka
+Flags:
+- Recover
+- Detrimental
+Archetype:
+  MutagenObjectType: MagicEffectArchetype
+  ActorValue: Magicka
+DualCastScale: 1
+CastingSoundLevel: Normal
+Sounds: []
+Description:
+  TargetLanguage: English
+  Value: Maintained spells are reserving <mag> points of magicka
