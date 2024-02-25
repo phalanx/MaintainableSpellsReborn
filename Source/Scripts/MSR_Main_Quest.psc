@@ -465,7 +465,6 @@ Function __ToggleSpellOff(Spell akSpell)
     UpdateReservedMagicka(spellCost * -1, reserveMultiplier)
     UpdateDebuff()
     RemoveKeywordOnForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
-
 EndFunction
 
 Function ToggleAllSpellsOff(bool utilityOnly)
@@ -475,9 +474,12 @@ Function ToggleAllSpellsOff(bool utilityOnly)
 EndFunction
 
 Function __ToggleAllSpellsOff(bool utilityOnly)
-    
-    Spell currentSpell = JFormMap.nextKey(jMaintainedSpells) as Spell
-    while currentSpell != None
+
+    int currentMaintainedSpells = JFormMap.allKeys(jMaintainedSpells)
+    int i = 0
+    Spell currentSpell
+    while i < jArray.count(currentMaintainedSpells)
+        currentSpell = jArray.getForm(currentMaintainedSpells, i) as Spell
         if utilityOnly
             if (JMap.getInt(JFormMap.getObj(jMaintainedSpells, currentSpell), "isUtilitySpell") as bool)
                 __ToggleSpellOff(currentSpell)
@@ -485,7 +487,7 @@ Function __ToggleAllSpellsOff(bool utilityOnly)
         else
             __ToggleSpellOff(currentSpell)
         endif
-        currentSpell = JFormMap.nextKey(jMaintainedSpells, currentSpell) as Spell
+        i += 1
     endwhile
 EndFunction
 

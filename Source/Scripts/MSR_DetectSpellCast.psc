@@ -24,7 +24,7 @@ EndEvent
 
 Event OnSpellCast(Form akSpell)
     bool dualCasting = false
-    if myself.GetAnimationVariableBool("isCastingDual")
+    if MSR_Main.playerRef.GetAnimationVariableBool("isCastingDual")
         Log("Dual Casting")
         dualCasting = true
     endif
