@@ -24,6 +24,8 @@ Keyword Property toggleableKeyword Auto
 Keyword Property blackListedKeyword Auto
 Actor Property playerRef Auto
 MagicEffect Property boundWeaponEffect Auto
+MagicEffect Property toggleableEffect Auto
+Spell Property LastToggle = None Auto Hidden
 
 string dataDir = "Data/MSR/"
 string userDir
@@ -140,7 +142,6 @@ Function Uninstall()
             RemoveKeywordOnForm(currentSpell.GetNthEffectMagicEffect(0), toggleableKeyword)
             int iArchetype = GetEffectArchetypeAsInt(currentSpell.GetNthEffectMagicEffect(0))
             if iArchetype == 17 ; Bound Weapon
-                Log("Bound Weapon configured")
                 RemoveMagicEffectFromSpell(currentSpell, boundWeaponEffect, 0, 0, 1)
             endif
         endif

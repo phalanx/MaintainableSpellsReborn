@@ -43,6 +43,7 @@ event OnPageDraw()
     AddHeaderOption(FONT_PRIMARY("$MSR_DEBUGHEADER"))
     AddToggleOptionST("Toggle___debugLogging", "$MSR_debugLogging", JDB.solveInt(".MSR.Config.debugLogging") as bool)
     AddToggleOptionST("Toggle_jContainersCheck", "$MSR_jContainersCheck", MSR_Main.jContainersCheck)
+    AddTextOptionST("Text_Uninstall", "$MSR_Uninstall", None)
     AddHeaderOption(FONT_PRIMARY("$MSR_XPHEADER"))
     AddSliderOptionST("Slider_xpGainDelay", "$MSR_XPDELAY", JDB.solveFlt(".MSR.Config.xpGainDelay"), "{1}")
     AddSliderOptionST("Slider_xpMultiplier", "$MSR_XPMULTIPLIER", JDB.solveFlt(".MSR.Config.xpMultiplier"), "{1}")
@@ -142,7 +143,6 @@ State Toggle_jContainersCheck
     EndEvent
 EndState
 
-
 State Menu_BacklashType
     Event OnMenuOpenST(string state_id)
         SetMenuDialog(backlashTypeStrings, JDB.solveInt(configKey + "backlashType"), 3)
@@ -207,5 +207,14 @@ State Slider_xpMultiplier
     EndEvent
     Event OnHighlightST(string state_id)
         SetInfoText("$MSR_XPMULTIPLIER_HELP")
+    EndEvent
+EndState
+
+State Text_Uninstall
+    Event OnSelectST(string state_id)
+        SetTextOptionValueST("$MSR_Uninstall", false, "Text_Uninstall")
+        SetTextOptionValueST("$MSR_MCM_EXIT", false, "Text_Uninstall")
+        MSR_Main.Uninstall()
+        Utility.Wait(0.1)
     EndEvent
 EndState
