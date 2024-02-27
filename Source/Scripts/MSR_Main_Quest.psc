@@ -22,9 +22,10 @@ Perk Property spellManipulationPerk Auto
 Keyword Property freeToggleOffKeyword Auto
 Keyword Property toggleableKeyword Auto
 Keyword Property blackListedKeyword Auto
+FormList Property supportedSpellsFL Auto
+FormList Property maintainedSpellsFL Auto
 Actor Property playerRef Auto
 MagicEffect Property boundWeaponEffect Auto
-MagicEffect Property toggleableEffect Auto
 Spell Property LastToggle = None Auto Hidden
 
 string dataDir = "Data/MSR/"
@@ -168,29 +169,43 @@ Function UpdateDefaultReservationMultiplier(float newVal)
 EndFunction
 
 Function UpdateSpell(Spell akSpell, bool blacklisted)
-    if blacklisted
-        if !akSpell.HasKeyword(blackListedKeyword)
-            AddKeywordToForm(akSPell, blackListedKeyword)
-        endif
-    else
-        if akSpell.HasKeyword(blackListedKeyword)
-            RemoveKeywordOnForm(akSpell, blackListedKeyword)
-        endif
+    if akSpell.HasKeyword(blackListedKeyword)
+        RemoveKeywordOnForm(akSpell.GetNthEffectMagicEffect(0), blackListedKeyword)
     endif
 
-    if !akSpell.HasKeyword(toggleableKeyword)
-        AddKeywordToForm(akSpell.GetNthEffectMagicEffect(0), toggleableKeyword)
-        int iArchetype = GetEffectArchetypeAsInt(akSpell.GetNthEffectMagicEffect(0))
+    if akSpell.HasKeyword(toggleableKeyword)
+        RemoveKeywordOnForm(akSpell.GetNthEffectMagicEffect(0), toggleableKeyword)
+    endif
+
+    int iArchetype = GetEffectArchetypeAsInt(akSpell.GetNthEffectMagicEffect(0))
+    if blacklisted
+        if supportedSpellsFL.HasForm(akSpell)
+            supportedSpellsFL.RemoveAddedForm(akSpell)
+        endif
+        if maintainedSpellsFL.HasForm(akSpell)
+            maintainedSpellsFL.RemoveAddedForm(akSpell)
+            playerRef.DispelSpell(akSpell)
+        endif
+        if iArchetype == 17 ; Bound Weapon
+            Log("This next step may fail but it's fine")
+            RemoveMagicEffectFromSpell(akSpell, boundWeaponEffect, 0, 0, 1)
+            Log("See it's fine")
+        endif
+        return
+    endif
+
+    if !supportedSpellsFL.HasForm(akSpell)
+        supportedSpellsFL.AddForm(akSpell)
         if iArchetype == 17 ; Bound Weapon
             AddMagicEffectToSpell(akSpell, boundWeaponEffect, 0, 0, 1, asConditionList=new string[1])
         endif
     endif
     if JFormMap.hasKey(jMaintainedSpells, akSpell)
-        if !akSpell.HasKeyword(freeToggleOffKeyword)
-           AddKeywordToForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
+        if !maintainedSpellsFL.HasForm(akSpell)
+           maintainedSpellsFL.AddForm(akSpell)
         endif
-    elseif akSpell.HasKeyword(freeToggleOffKeyword)
-        RemoveKeywordOnForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
+    elseif maintainedSpellsFL.HasForm(akSpell)
+        maintainedSpellsFL.RemoveAddedForm(akSpell)
     endif
 EndFunction
 
@@ -406,8 +421,7 @@ Function __ToggleSpellOn(Spell akSpell, bool wasDualCast)
     Log(JFormMap.allKeysPArray(jMaintainedSpells))
     JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells, true)
     UpdateDebuff()
-    AddKeywordToForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
-
+    maintainedSpellsFL.AddForm(akSpell)
 EndFunction
 
 Function ResolveKeywordedMagicEffect(Spell akSpell, string spellKeyword)
@@ -465,7 +479,7 @@ Function __ToggleSpellOff(Spell akSpell)
     JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells, true)
     UpdateReservedMagicka(spellCost * -1, reserveMultiplier)
     UpdateDebuff()
-    RemoveKeywordOnForm(akSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
+    maintainedSpellsFL.RemoveAddedForm(akSpell)
 EndFunction
 
 Function ToggleAllSpellsOff(bool utilityOnly)
@@ -506,5 +520,21 @@ State ProcessingSpell
     EndFunction
     Function RemoveConjuration(string asKeyword)
         Log("Already Processing Spell")
+    EndFunction
+EndState
+
+State RunningMaintenance
+    Function ToggleSpellOn(Spell akSpell, bool wasDualCast)
+        Log("Running Maintenance")
+        playerRef.DispelSpell(akSpell)
+    EndFunction
+    Function ToggleSpellOff(Spell akSpell)
+        Log("Running Maintenance")
+    EndFunction
+    Function ToggleAllSpellsOff(bool utilityOnly)
+        Log("Running Maintenance")
+    EndFunction
+    Function RemoveConjuration(string asKeyword)
+        Log("Running Maintenance")
     EndFunction
 EndState

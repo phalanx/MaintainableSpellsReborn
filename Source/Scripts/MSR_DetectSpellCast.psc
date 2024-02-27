@@ -8,19 +8,28 @@ Keyword Property freeToggleOffKeyword Auto
 Actor myself
 string supportedSpellsKey = ".MSR.supportedSpells"
 string maintainedSpellsKey = ".MSR.maintainedSpells"
+int jSupportedSpells
+int jMaintainedSpells
 
 Function Log(string msg)
     MSR_Main.Log("DetectSpellCast - " + msg)
 EndFunction
 
 Event OnInit()
-    myself = self.GetReference() as Actor
+    Maintenance()
 EndEvent
 
 Event OnPlayerLoadGame()
     Utility.Wait(0.5)
+    Maintenance()
     MSR_Main.Maintenance()
 EndEvent
+
+Function Maintenance()
+    myself = self.GetReference() as Actor
+    jSupportedSpells = JDB.solveObj(supportedSpellsKey)
+    jMaintainedSpells = JDB.solveObj(maintainedSpellsKey)
+EndFunction
 
 Event OnSpellCast(Form akSpell)
     bool dualCasting = false
@@ -34,19 +43,16 @@ Event OnSpellCast(Form akSpell)
     endif
     Log(spellCast + " cast")
     Log("Archetype: " + GetEffectArchetypeAsInt(spellCast.GetNthEffectMagicEffect(0))) ; 22 or 17 for reanimate/summon
-    int jSupportedSpells = JDB.solveObj(supportedSpellsKey)
+
     if jSupportedSpells == 0
         Log("Err: No supported spells in JDB")
         return
     endif
 
-    if spellCast.HasKeyword(MSR_Main.blackListedKeyword)
-        Log("Blacklisted spell detected")
-        return
-    elseif spellCast.HasKeyword(freeToggleOffKeyword)
+    if JFormMap.hasKey(jMaintainedSpells, spelLCast)
         Log("Maintained spell detected")
         MSR_Main.ToggleSpellOff(spellCast)
-    elseif spellCast.HasKeyword(toggleableKeyword)
+    elseif JFormMap.hasKey(jSupportedSpells, spellCast)
         MSR_Main.ToggleSpellOn(spellCast, dualCasting)
     else
         Log("Unsupported spell")
