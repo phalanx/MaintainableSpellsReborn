@@ -10,6 +10,7 @@ bool Property jContainersCheck = true Auto Hidden
 string Property MSR_ERROR_JCONTAINERSMISSING = "JContainers appears to be missing. Proceed with Caution" Auto Hidden
 string Property MSR_ERROR_JCONTAINERSAPIHIGH = "JContainers API Version is higher than expected. Notify the author of Maintainable Spells Reborn and proceed with caution" Auto Hidden
 string Property MSR_ERROR_JCONTAINERSAPILOW = "JContainers API Version is lower than expected. Upgrade JContainers or proceed with caution" Auto Hidden
+string Property MSR_UNINSTALL_FINISHED = "MSR: Uninstall finished" Auto
 
 Spell Property magickaDebuffSpell Auto
 ; 0 - Magicka Rate Mult
@@ -139,15 +140,15 @@ Function Uninstall()
 
     Spell currentSpell = JFormMap.nextKey(jSupportedSpells) as Spell
     while currentSpell != None
-        if currentSpell.HasKeyword(toggleableKeyword)
-            RemoveKeywordOnForm(currentSpell.GetNthEffectMagicEffect(0), toggleableKeyword)
+        if supportedSpellsFL.HasForm(currentSpell)
+            supportedSpellsFL.RemoveAddedForm(currentSpell)
             int iArchetype = GetEffectArchetypeAsInt(currentSpell.GetNthEffectMagicEffect(0))
             if iArchetype == 17 ; Bound Weapon
                 RemoveMagicEffectFromSpell(currentSpell, boundWeaponEffect, 0, 0, 1)
             endif
         endif
-        if currentSpell.HasKeyword(freeToggleOffKeyword)
-            RemoveKeywordOnForm(currentSpell.GetNthEffectMagicEffect(0), freeToggleOffKeyword)
+        if maintainedSpellsFL.HasForm(currentSpell)
+            maintainedSpellsFL.RemoveAddedForm(currentSpell)
         endif
         currentSpell = JFormMap.nextKey(jSupportedSpells, currentSpell) as Spell
     endwhile
@@ -155,6 +156,7 @@ Function Uninstall()
     JDB.setObj(".MSR", 0)
     JValue.releaseObjectsWithTag(retainTag)
     Log("Uninstall Finished")
+    Debug.MessageBox(MSR_UNINSTALL_FINISHED)
 EndFunction
 
 Function UpdateDefaultReservationMultiplier(float newVal)
