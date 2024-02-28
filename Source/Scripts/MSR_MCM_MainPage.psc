@@ -214,7 +214,7 @@ State Text_Uninstall
     Event OnSelectST(string state_id)
         SetTextOptionValueST("$MSR_Uninstall", false, "Text_Uninstall")
         SetTextOptionValueST("$MSR_MCM_EXIT", false, "Text_Uninstall")
-        MSR_Main.Uninstall()
+        MSR_Main.Stop()
         Utility.Wait(0.1)
     EndEvent
 EndState
