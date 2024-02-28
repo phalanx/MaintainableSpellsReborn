@@ -45,6 +45,7 @@
     <ZipFiles Output="Build">
         <ZipFile Name="@ModName" RootDir="." Compression="deflate">
             <Include>@ModName.esp</Include>
+            <Include>*_DISTR.ini</Include>
             <Include NoRecurse="true">*.bsa</Include>
             <Match In="Source\Scripts">*.psc</Match>
             <Match In="Scripts">*.pex</Match>
