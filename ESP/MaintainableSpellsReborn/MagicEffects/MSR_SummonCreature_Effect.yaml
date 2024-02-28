@@ -5,11 +5,11 @@ VirtualMachineAdapter:
   - Name: MSR_SummonedCreature_Effect
     Properties:
     - MutagenObjectType: ScriptObjectProperty
-      Name: MSR_Main
-      Object: 000D62:MaintainableSpellsReborn.esp
-    - MutagenObjectType: ScriptObjectProperty
       Name: PlayerRef
       Object: 000014:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
+      Name: MSR_Main
+      Object: 000D62:MaintainableSpellsReborn.esp
 Name:
   TargetLanguage: English
   Value: Summoned Creature

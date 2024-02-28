@@ -27,13 +27,15 @@ FormList Property supportedSpellsFL Auto
 FormList Property maintainedSpellsFL Auto
 Actor Property playerRef Auto
 MagicEffect Property boundWeaponEffect Auto
-Spell Property LastToggle = None Auto Hidden
+MagicEffect Property conjurationEffect Auto
+Spell Property lastConjureSpell = None Auto Hidden
 
 string dataDir = "Data/MSR/"
 string userDir
 string retainTag = "MaintainableSpellsReborn"
 string supportedSpellsKey = ".MSR.supportedSpells"  ; JFormMap
 string maintainedSpellsKey = ".MSR.maintainedSpells" ; JFormMap
+string conjurationEffectsKey = ".MSR.conjurationEffects" ; JFormMap
 string userConfiguredSpellsKey = ".MSR.userConfiguredSpells" ; JArray
 string lastXPGainTimeKey = ".MSR.lastXPGain" ; Float
 
@@ -49,9 +51,25 @@ string lastXPGainTimeKey = ".MSR.lastXPGain" ; Float
 ; float reserveMultiplier
 string configKey = ".MSR.Config."
 
+int Property jSupportedSpells 
+    int Function Get()
+        return JDB.solveObj(supportedSpellsKey, JFormMap.object())
+    EndFunction
+    Function Set(int newVal)
+        JDB.solveObjSetter(supportedSpellsKey, newVal, true)
+    EndFunction
+EndProperty
+
+int Property jMaintainedSpells 
+    int Function Get()
+        return JDB.solveObj(maintainedSpellsKey, JFormMap.object())
+    EndFunction
+    Function Set(int newVal)
+        JDB.solveObjSetter(maintainedSpellsKey, newVal, true)
+    EndFunction
+EndProperty
+
 int jSpellKeywordMap
-int jSupportedSpells
-int jMaintainedSpells
 
 int spellDurationSeconds = 5962000 ; 69 Days. This is just an arbitrarily large number
 float currentReservedMagicka = 0.0
@@ -92,9 +110,10 @@ Event OnInit()
     userDir = JContainers.userDirectory() + "MSR/"
 
     JDB.solveObjSetter(supportedSpellsKey, JFormMap.object(), true)
-    JDB.solveObjSetter(maintainedSpellsKey, JFormMap.object(), true)
     JDB.solveObjSetter(userConfiguredSpellsKey, JArray.object(), true)
-    
+    JDB.solveObjSetter(maintainedSpellsKey, JFormMap.object(), true)
+    JDB.solveObjSetter(conjurationEffectsKey, JFormMap.object(), true)
+
     JDB.solveIntSetter(configKey + "debugLogging", 1, true)
     JDB.solveFltSetter(configKey + "perSpellDebuffAmount", 1.0, true)
     JDB.solveIntSetter(configKey + "perSpellThreshold", 3, true)
@@ -116,8 +135,6 @@ Function Maintenance()
     ValidateJContainers()
 
     playerRef.AddPerk(spellManipulationPerk)
-    jSupportedSpells = JDB.solveObj(supportedSpellsKey, JFormMap.object())
-    jMaintainedSpells = JDB.solveObj(maintainedSpellsKey, JFormMap.object())
 
     LoadMainMCMConfig()
     ReadDefaultSpells()
@@ -137,7 +154,6 @@ Function Uninstall()
     playerRef.RemoveSpell(magickaDebuffSpell)
     playerRef.RemoveSpell(mentalLoadDebuffs[0])
     playerRef.RemoveSpell(mentalLoadDebuffs[1])
-
     Spell currentSpell = JFormMap.nextKey(jSupportedSpells) as Spell
     while currentSpell != None
         if supportedSpellsFL.HasForm(currentSpell)
@@ -247,7 +263,6 @@ Function ReadDefaultSpells()
     Log("Reading default configurations")
     int jNewSpells = ReadConfigDirectory(dataDir)
     jSupportedSpells = jNewSpells
-    JDB.solveObjSetter(supportedSpellsKey, jSupportedSpells, true)
     JValue.release(jNewSpells)
 endFunction
 
@@ -256,7 +271,6 @@ Function ReadUserConfiguration()
     int jNewSpells = ReadConfigDirectory(userDir)
     JFormMap.addPairs(jSupportedSpells, jNewSpells, true)
     JDB.solveObjSetter(userConfiguredSpellsKey, jNewSpells)
-    JDB.solveObjSetter(supportedSpellsKey, jSupportedSpells, true)
     JValue.release(jNewSpells)
 EndFunction
 
@@ -335,7 +349,7 @@ Function UpdateDebuff()
         return
     endif
 
-    int thresholdCheck = JFormMap.count(JDB.solveObj(maintainedSpellsKey)) - perSpellThreshold
+    int thresholdCheck = JFormMap.count(jMaintainedSpells) - perSpellThreshold
     if thresholdCheck < 0
         thresholdCheck = 0       
     endif
@@ -385,7 +399,7 @@ Function __ToggleSpellOn(Spell akSpell, bool wasDualCast)
         spellCost = spellCost * JDB.solveFlt(configKey + "dualCastMultiplier")
     endif
     Log("Toggle on spell Cost: " + spellCost)
-    int spellData = JFormMap.getObj(JDB.solveObj(supportedSpellsKey), akSpell)
+    int spellData = JFormMap.getObj(jSupportedSpells, akSpell)
     int reserveMultiplier = JMap.getInt(spellData, "reserveMultiplier", -1)
     if reserveMultiplier == -1
         reserveMultiplier = JDB.solveInt(configKey + "reserveMultiplier", 50)
@@ -398,32 +412,19 @@ Function __ToggleSpellOn(Spell akSpell, bool wasDualCast)
         return
     endif
 
-    int spellArchetype = GetEffectArchetypeAsInt(akSpell.GetNthEffectMagicEffect(0))
-    if spellArchetype == 22 || spellArchetype == 18 ; 22 for reanimate/18 for summon
-        int handler = ModEvent.Create("MSR_SummonSpellCast")
-        if handler
-            ModEvent.Send(handler)
-        else
-            Debug.Notification("MSR ERR: Could not send SummonSpell Event")
-        endif
-    endif
-
     ResolveKeywordedMagicEffect(akSpell, JMap.getStr(spellData, "Keyword"))
 
     if !UpdateReservedMagicka(spellCost, reserveMultiplier)
         Log("Backlash triggered")
         playerRef.DispelSpell(akSpell)
-        GoToState("")
         return
     endif
 
     playerRef.RestoreActorValue("Magicka", spellCost)
     JMap.setFlt(spellData, "spellCost", spellCost)
     JFormMap.setObj(jMaintainedSpells, akSpell, spellData)
-    Log(JFormMap.allKeysPArray(jMaintainedSpells))
-    JDB.solveObjSetter(maintainedSpellsKey, jMaintainedSpells, true)
-    UpdateDebuff()
     maintainedSpellsFL.AddForm(akSpell)
+    UpdateDebuff()
 EndFunction
 
 Function ResolveKeywordedMagicEffect(Spell akSpell, string spellKeyword)
@@ -491,7 +492,15 @@ Function ToggleAllSpellsOff(bool utilityOnly)
 EndFunction
 
 Function __ToggleAllSpellsOff(bool utilityOnly)
-
+    int eventHandle 
+    if utilityOnly
+        eventHandle = ModEvent.Create("MSR_DispelUtility_Event")
+    else
+        eventHandle = ModEvent.Create("MSR_DispelAll_Event")
+    endif
+    if eventHandle != 0
+        ModEvent.Send(eventHandle)
+    endif
     int currentMaintainedSpells = JFormMap.allKeys(jMaintainedSpells)
     int i = 0
     Spell currentSpell
@@ -506,6 +515,8 @@ Function __ToggleAllSpellsOff(bool utilityOnly)
         endif
         i += 1
     endwhile
+    currentReservedMagicka = 0
+    UpdateDebuff()
 EndFunction
 
 State ProcessingSpell

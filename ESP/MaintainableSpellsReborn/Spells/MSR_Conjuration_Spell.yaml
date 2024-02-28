@@ -1,0 +1,16 @@
+FormKey: 00081B:MaintainableSpellsReborn.esp
+EditorID: MSR_Conjuration_Spell
+Name:
+  TargetLanguage: English
+  Value: MSR Conjuration Spell
+EquipmentType: 013F44:Skyrim.esm
+Description:
+  TargetLanguage: English
+  Value: ''
+Flags:
+- IgnoreResistance
+- NoAbsorbOrReflect
+Type: Ability
+Effects:
+- BaseEffect: 00081A:MaintainableSpellsReborn.esp
+  Data: {}
