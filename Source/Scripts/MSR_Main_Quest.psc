@@ -70,8 +70,6 @@ int Property jMaintainedSpells
 EndProperty
 
 int jSpellKeywordMap
-
-int spellDurationSeconds = 5962000 ; 69 Days. This is just an arbitrarily large number
 float currentReservedMagicka = 0.0
 
 Function Log(string msg)
