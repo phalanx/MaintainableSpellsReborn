@@ -52,6 +52,15 @@
             <Match In="interface\translations">*.txt</Match>
             <Match In=".">LICENSE</Match>
         </ZipFile>
+        <ZipFile Name="Apocalypse" RootDir="./Configs" Compression="deflate">
+            <Include>Apocalypse.json</Include>
+        </ZipFile>
+        <ZipFile Name="Mysticism" RootDir="./Configs" Compression="deflate">
+            <Include>Odin.json</Include>
+        </ZipFile>
+        <ZipFile Name="Odin" RootDir="./Configs" Compression="deflate">
+            <Include>Odin.json</Include>
+        </ZipFile>
     </ZipFiles>
     <!-- This will remove any *.bsa files in this directory *after* the build, if there are any. Set UseInBuild="false" to disable. -->
     <PostBuildEvent Description="Post-Build Tasks" UseInBuild="true">

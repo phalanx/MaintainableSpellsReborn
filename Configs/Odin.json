@@ -9,10 +9,10 @@
     "Keyword": "Generic"
   },
   "__formData|Odin - Skyrim Magic Overhaul.esp|0xd4349": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|Odin - Skyrim Magic Overhaul.esp|0x100032": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|Odin - Skyrim Magic Overhaul.esp|0x140b03": {
     "Keyword": "MagicCloak"
@@ -21,22 +21,22 @@
     "Keyword": "Generic"
   },
   "__formData|Odin - Skyrim Magic Overhaul.esp|0x18c58c": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|Odin - Skyrim Magic Overhaul.esp|0x18c58e": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|Odin - Skyrim Magic Overhaul.esp|0x1916a5": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|Odin - Skyrim Magic Overhaul.esp|0x1916b1": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|Odin - Skyrim Magic Overhaul.esp|0x1a5ad7": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|Odin - Skyrim Magic Overhaul.esp|0x1a5aea": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|Odin - Skyrim Magic Overhaul.esp|0x251eab": {
     "Keyword": "Generic"
@@ -69,6 +69,9 @@
     "Keyword": "Generic"
   },
   "__formData|Odin - Skyrim Magic Overhaul.esp|0x298e3a": {
+    "Keyword": "Generic"
+  },
+  "__formData|Odin - Skyrim Magic Overhaul.esp|0x251ea5": {
     "Keyword": "Generic"
   }
 }

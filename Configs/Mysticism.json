@@ -3,10 +3,10 @@
     "typeName": "JFormMap"
   },
   "__formData|MysticismMagic.esp|0x1f2fa": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x1f2fb": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x10d264": {
     "Keyword": "MagicFortifySpeed"
@@ -75,55 +75,55 @@
     "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x40933c": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x413541": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x413545": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x413549": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x41864c": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x41d74f": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x42795a": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x43bd62": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x43bd66": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x43bd6c": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x43bd6d": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x43bd72": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x43bd7a": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x43bd82": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x43bd87": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x45538c": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x45f595": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0x7d0721": {
     "Keyword": "Generic"
@@ -147,15 +147,15 @@
     "Keyword": "bound"
   },
   "__formData|MysticismMagic.esp|0xe7fec6": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0xe7fecb": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0xe7fed0": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   },
   "__formData|MysticismMagic.esp|0xe7fed5": {
-    "Keyword": "Summon"
+    "Keyword": "Generic"
   }
 }
