@@ -495,6 +495,7 @@ Function __ToggleAllSpellsOff(bool utilityOnly)
         eventHandle = ModEvent.Create("MSR_DispelUtility_Event")
     else
         eventHandle = ModEvent.Create("MSR_DispelAll_Event")
+        currentReservedMagicka = 0
     endif
     if eventHandle != 0
         ModEvent.Send(eventHandle)
@@ -513,7 +514,6 @@ Function __ToggleAllSpellsOff(bool utilityOnly)
         endif
         i += 1
     endwhile
-    currentReservedMagicka = 0
     UpdateDebuff()
 EndFunction
 
