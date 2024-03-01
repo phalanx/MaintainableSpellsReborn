@@ -57,7 +57,7 @@
             <Include>Apocalypse.json</Include>
         </ZipFile>
         <ZipFile Name="Mysticism" RootDir="./Configs" Compression="deflate">
-            <Include>Odin.json</Include>
+            <Include>Mysticism.json</Include>
         </ZipFile>
         <ZipFile Name="Odin" RootDir="./Configs" Compression="deflate">
             <Include>Odin.json</Include>
