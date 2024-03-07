@@ -54,13 +54,13 @@
             <Match In=".">LICENSE</Match>
         </ZipFile>
         <ZipFile Name="Apocalypse" RootDir="./Configs" Compression="deflate">
-            <Include>Apocalypse.json</Include>
+            <Include>MSR/Apocalypse.json</Include>
         </ZipFile>
         <ZipFile Name="Mysticism" RootDir="./Configs" Compression="deflate">
-            <Include>Mysticism.json</Include>
+            <Include>MSR/Mysticism.json</Include>
         </ZipFile>
         <ZipFile Name="Odin" RootDir="./Configs" Compression="deflate">
-            <Include>Odin.json</Include>
+            <Include>MSR/Odin.json</Include>
         </ZipFile>
     </ZipFiles>
     <!-- This will remove any *.bsa files in this directory *after* the build, if there are any. Set UseInBuild="false" to disable. -->

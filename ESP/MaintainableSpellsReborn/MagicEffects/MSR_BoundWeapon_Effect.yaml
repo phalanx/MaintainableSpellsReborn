@@ -4,12 +4,12 @@ VirtualMachineAdapter:
   Scripts:
   - Name: MSR_Conjuration_Effect
     Properties:
-    - MutagenObjectType: ScriptStringProperty
-      Name: keywordToDispel
-      Data: bound
     - MutagenObjectType: ScriptObjectProperty
       Name: MSR_Main
       Object: 000D62:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptStringProperty
+      Name: keywordToDispel
+      Data: bound
 Flags:
 - HideInUI
 Archetype:

@@ -78,7 +78,7 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
         endif
         RegisterForActorKilled(self)
     endif
-    Utility.Wait(0.1)
+    Utility.Wait(0.5)
     if !effectFinished
         RegisterForActorReanimateStart(self)
     endif
@@ -154,7 +154,7 @@ Function ToggleOff()
     endif
     MSR_Main.UpdateReservedMagicka(spellCost * -1, reserveMultiplier)
     MSR_Main.UpdateDebuff()
-    JFormMap.SetObj(jMaintainedConjurations, conjuredActor, 0)
+    JFormmap.removeKey(jMaintainedConjurations, conjuredActor)
 EndFunction
 
 Function DispelConjuringSpell()

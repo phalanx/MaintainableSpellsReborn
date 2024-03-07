@@ -514,6 +514,7 @@ Function __ToggleAllSpellsOff(bool utilityOnly)
         endif
         i += 1
     endwhile
+    JDB.solveObjSetter(".MSR.MaintainedConjurationsKey", JFormMap.object())
     UpdateDebuff()
 EndFunction
 

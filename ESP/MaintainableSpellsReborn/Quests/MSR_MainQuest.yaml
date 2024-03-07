@@ -4,28 +4,6 @@ VirtualMachineAdapter:
   Scripts:
   - Name: MSR_Main_Quest
     Properties:
-    - MutagenObjectType: ScriptObjectProperty
-      Name: boundWeaponEffect
-      Object: 00080E:MaintainableSpellsReborn.esp
-    - MutagenObjectType: ScriptObjectListProperty
-      Name: backlashDebuffs
-      Objects:
-      - Name: ''
-        Object: 000811:MaintainableSpellsReborn.esp
-      - Name: ''
-        Object: 000814:MaintainableSpellsReborn.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: PlayerRef
-      Object: 000014:Skyrim.esm
-    - MutagenObjectType: ScriptObjectProperty
-      Name: magickaDebuffSpell
-      Object: 000801:MaintainableSpellsReborn.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: toggleableKeyword
-      Object: 00080D:MaintainableSpellsReborn.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: blackListedKeyword
-      Object: 000815:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectListProperty
       Name: mentalLoadDebuffs
       Objects:
@@ -34,17 +12,39 @@ VirtualMachineAdapter:
       - Name: ''
         Object: 000807:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
+      Name: PlayerRef
+      Object: 000014:Skyrim.esm
+    - MutagenObjectType: ScriptObjectProperty
       Name: spellManipulationPerk
       Object: 000809:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: freeToggleOffKeyword
+      Object: 00080A:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: boundWeaponEffect
+      Object: 00080E:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: blackListedKeyword
+      Object: 000815:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
       Name: maintainedSpellsFL
       Object: 000819:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
+      Name: toggleableKeyword
+      Object: 00080D:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectProperty
       Name: supportedSpellsFL
       Object: 000818:MaintainableSpellsReborn.esp
+    - MutagenObjectType: ScriptObjectListProperty
+      Name: backlashDebuffs
+      Objects:
+      - Name: ''
+        Object: 000811:MaintainableSpellsReborn.esp
+      - Name: ''
+        Object: 000814:MaintainableSpellsReborn.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: freeToggleOffKeyword
-      Object: 00080A:MaintainableSpellsReborn.esp
+      Name: magickaDebuffSpell
+      Object: 000801:MaintainableSpellsReborn.esp
   FileName: ''
   Aliases:
   - Property:
@@ -55,14 +55,14 @@ VirtualMachineAdapter:
     - Name: MSR_DetectSpellCast
       Properties:
       - MutagenObjectType: ScriptObjectProperty
+        Name: freeToggleOffKeyword
+        Object: 00080A:MaintainableSpellsReborn.esp
+      - MutagenObjectType: ScriptObjectProperty
         Name: toggleableKeyword
         Object: 00080D:MaintainableSpellsReborn.esp
       - MutagenObjectType: ScriptObjectProperty
         Name: MSR_Main
         Object: 000D62:MaintainableSpellsReborn.esp
-      - MutagenObjectType: ScriptObjectProperty
-        Name: freeToggleOffKeyword
-        Object: 00080A:MaintainableSpellsReborn.esp
 Flags:
 - StartGameEnabled
 - 0x10
